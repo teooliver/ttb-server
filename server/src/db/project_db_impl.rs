@@ -4,7 +4,7 @@ use crate::models::project::{
 use crate::{error::Error::*, Result};
 use futures::StreamExt;
 use mongodb::bson::oid::ObjectId;
-use mongodb::bson::{doc, Document};
+use mongodb::bson::{doc, Bson, Document};
 use mongodb::Collection;
 
 use super::{DB, DB_NAME};
@@ -19,8 +19,7 @@ impl DB {
         let client = doc.get_object_id("client")?;
         let name = doc.get_str("name")?;
         let color = doc.get_str("color")?;
-        let estimate = doc.get_str("estimate")?;
-        let status = doc.get_str("status")?;
+        // let estimate = doc.get_str("estimate")?;
         let created_at = doc.get_datetime("created_at")?;
         let updated_at = doc.get_datetime("updated_at")?;
 
@@ -29,8 +28,7 @@ impl DB {
             client: client.to_hex(),
             name: name.to_owned(),
             color: color.to_owned(),
-            estimate: estimate.to_owned(),
-            status: status.to_owned(),
+            // estimate: estimate.to_owned(),
             created_at: created_at.to_chrono().to_rfc3339(),
             updated_at: updated_at.to_chrono().to_rfc3339(),
         };
@@ -50,8 +48,7 @@ impl DB {
             let name = project_doc.get_str("name")?;
             let color = project_doc.get_str("color")?;
             let client_name = project_doc.get_str("client_name")?;
-            let estimate = project_doc.get_str("estimate")?;
-            let status = project_doc.get_str("status")?;
+            // let estimate = project_doc.get_str("estimate")?;
 
             // Need Better Names
             let proj = ProjectAfterAggregation {
@@ -59,8 +56,7 @@ impl DB {
                 name: name.to_string(),
                 color: color.to_string(),
                 client_name: client_name.to_string(),
-                estimate: estimate.to_string(),
-                status: status.to_string(),
+                // estimate: estimate.to_string(),
             };
 
             projects_vec.push(proj);
@@ -117,8 +113,7 @@ impl DB {
                 "name": "$name",
                 "color": "$color",
                 "client_name": { "$arrayElemAt": ["$client_name.name", 0] },
-                "estimate": "$estimate",
-                "status": "$status",
+                // "estimate": "$estimate",
                 "subprojects": "$subprojects",
             },
         };
@@ -145,15 +140,18 @@ impl DB {
         Ok(results)
     }
 
-    pub async fn create_project(&self, _entry: &ProjectRequest) -> Result<()> {
-        self.get_projects_collection()
+    pub async fn create_project(&self, _entry: &ProjectRequest) -> Result<Bson> {
+        let oid = ObjectId::parse_str(_entry.client.to_hex())
+            .map_err(|_| InvalidIDError(_entry.client.to_hex()))?;
+
+        let new_project = self
+            .get_projects_collection()
             .insert_one(
                 doc! {
                 "name": _entry.name.clone(),
                 "color": _entry.color.clone(),
-                "estimate": _entry.estimate.clone(),
-                "status": _entry.status.clone(),
-                "client": _entry.client,
+                // "estimate": _entry.estimate.clone(),
+                "client": oid,
                 "created_at": chrono::Utc::now().clone(),
                 "updated_at": chrono::Utc::now().clone(),
                 },
@@ -162,7 +160,7 @@ impl DB {
             .await
             .map_err(MongoQueryError)?;
 
-        Ok(())
+        Ok(new_project.inserted_id)
     }
 
     pub async fn delete_project(&self, id: &str) -> Result<()> {

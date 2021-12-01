@@ -48,13 +48,13 @@ pub fn create_project(clients_ids: Vec<String>) -> ProjectRequest {
     let client_id = ObjectId::parse_str(clients_ids[rng_client_index].to_string())
         .map_err(|_| InvalidIDError(clients_ids[rng_client_index].to_owned()))
         .unwrap();
+    // let client_id = clients_ids[rng_client_index].to_string();
 
     let new_project = ProjectRequest {
         client: client_id,
         name: fake::faker::company::en::CompanyName().fake(),
         color: PROJECT_COLORS[rng_color_index].to_string(),
-        estimate: "".to_string(),
-        status: "".to_string(),
+        // estimate: "".to_string(),
     };
 
     new_project
@@ -72,8 +72,7 @@ pub fn generate_projects_data(
             "client": project.client,
             "name": project.name.to_string(),
             "color": project.color.to_string(),
-            "estimate": project.estimate.to_string(),
-            "status": project.status.to_string(),
+            // "estimate": project.estimate.to_string(),
             "created_at": chrono::Utc::now().clone(),
             "updated_at": chrono::Utc::now().clone(),
         });

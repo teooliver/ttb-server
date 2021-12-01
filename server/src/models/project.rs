@@ -7,19 +7,19 @@ pub struct ProjectSchema {
     pub client: String,
     pub name: String,
     pub color: String,
-    pub estimate: String,
-    pub status: String,
+    // pub estimate: String,
+    // pub status: String,
     pub created_at: DateTime,
     pub updated_at: DateTime,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ProjectRequest {
-    pub client: ObjectId,
     pub name: String,
+    pub client: ObjectId,
+    // pub estimate: String,
+    // pub status: String,
     pub color: String,
-    pub estimate: String,
-    pub status: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -28,8 +28,8 @@ pub struct ProjectResponse {
     pub client: String,
     pub name: String,
     pub color: String,
-    pub estimate: String,
-    pub status: String,
+    // pub estimate: String,
+    // pub status: String,
     pub created_at: String,
     pub updated_at: String,
 }
@@ -46,6 +46,6 @@ pub struct ProjectAfterAggregation {
     pub name: String,
     pub color: String,
     pub client_name: String,
-    pub estimate: String,
-    pub status: String,
+    // pub estimate: String,
+    // pub status: String,
 }

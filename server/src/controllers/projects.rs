@@ -15,10 +15,11 @@ pub async fn fetch_project_handler(id: String, db: DB) -> WebResult<impl Reply> 
     Ok(json(&project))
 }
 pub async fn create_project_handler(body: ProjectRequest, db: DB) -> WebResult<impl Reply> {
-    db.create_project(&body)
+    let project = db
+        .create_project(&body)
         .await
         .map_err(|e| reject::custom(e))?;
-    Ok(StatusCode::CREATED)
+    Ok(json(&project))
 }
 
 pub async fn delete_project_handler(id: String, db: DB) -> WebResult<impl Reply> {
