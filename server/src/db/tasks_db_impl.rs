@@ -239,6 +239,12 @@ impl DB {
         let end_time: bson::DateTime = chrono_endtime.into();
         let project: Option<ObjectId> = _entry.project.clone();
 
+        println!("GOT HERE Inside Task");
+
+        println!("{:?}", chrono_dt);
+        println!("{:?}", chrono_endtime);
+        println!("{:?}", initial_time);
+
         let query = doc! {
             "_id": oid,
         };
