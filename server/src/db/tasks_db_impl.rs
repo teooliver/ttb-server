@@ -100,7 +100,7 @@ impl DB {
             "$group": {
                 "_id": { "$dateToString": { "format": "%Y-%m-%d", "date": "$initial_time" } },
                 "tasks": { "$push": "$$ROOT" },
-                "totalTime": {
+                "total_time": {
                     "$sum":{
                         "$divide": [{ "$subtract": ["$end_time", "$initial_time"] }, 1000],
                     },
@@ -128,7 +128,8 @@ impl DB {
             let doc_real = doc.unwrap();
             let id = doc_real.get_str("_id")?;
             let tasks = doc_real.get_array("tasks")?;
-            let total_time = doc_real.get_i32("totalTime").unwrap_or(0);
+            // let total_time = doc_real.get_i32("total_time").unwrap_or(10000);
+            let total_time = doc_real.get_f64("total_time").unwrap_or(10000.0);
 
             for item in tasks {
                 let task_document = item.as_document().unwrap();
