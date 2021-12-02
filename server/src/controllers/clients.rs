@@ -14,11 +14,12 @@ pub async fn fetch_client_handler(id: String, db: DB) -> WebResult<impl Reply> {
 }
 
 pub async fn create_client_handler(body: ClientRequest, db: DB) -> WebResult<impl Reply> {
-    db.create_client(&body)
+    let client = db
+        .create_client(&body)
         .await
         .map_err(|e| reject::custom(e))?;
     // TODO: Return the created object
-    Ok(StatusCode::CREATED)
+    Ok(json(&client))
 }
 
 pub async fn delete_client_handler(id: String, db: DB) -> WebResult<impl Reply> {

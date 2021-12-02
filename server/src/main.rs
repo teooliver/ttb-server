@@ -113,19 +113,19 @@ async fn main() -> Result<()> {
 
     let clients = warp::path("clients");
     let client_routes = clients
-        .and(warp::path::end())
+        .and(warp::post())
+        .and(warp::body::json())
         .and(with_db(db.clone()))
-        .and_then(clients::fetch_all_clients_handler)
+        .and_then(clients::create_client_handler)
+        .or(clients
+            .and(warp::path::end())
+            .and(with_db(db.clone()))
+            .and_then(clients::fetch_all_clients_handler))
         .or(clients
             .and(warp::get())
             .and(warp::path::param())
             .and(with_db(db.clone()))
             .and_then(clients::fetch_client_handler))
-        .or(clients
-            .and(warp::post())
-            .and(warp::body::json())
-            .and(with_db(db.clone()))
-            .and_then(clients::create_client_handler))
         .or(clients
             .and(warp::delete())
             .and(warp::path::param())

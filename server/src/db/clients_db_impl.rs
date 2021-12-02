@@ -5,7 +5,7 @@ use crate::models::client::{ClientRequest, ClientResponse};
 use bson::Document;
 use futures::StreamExt;
 use mongodb::bson::oid::ObjectId;
-use mongodb::bson::{self, doc};
+use mongodb::bson::{self, doc, Bson};
 use mongodb::Collection;
 
 use super::{DB, DB_NAME};
@@ -69,8 +69,9 @@ impl DB {
         Ok(result)
     }
 
-    pub async fn create_client(&self, _entry: &ClientRequest) -> Result<(), error::Error> {
-        self.get_clients_collection()
+    pub async fn create_client(&self, _entry: &ClientRequest) -> Result<Bson, error::Error> {
+        let new_client = self
+            .get_clients_collection()
             .insert_one(
                 doc! {
                 "name": _entry.name.clone(),
@@ -82,7 +83,7 @@ impl DB {
             .await
             .map_err(MongoQueryError)?;
 
-        Ok(())
+        Ok(new_client.inserted_id)
     }
 
     pub async fn create_many_clients(
@@ -101,15 +102,16 @@ impl DB {
         let query = doc! {
             "_id": oid,
         };
-        let deleted_result = self.get_clients_collection()
+        let deleted_result = self
+            .get_clients_collection()
             .delete_one(query, None)
             .await
             .map_err(MongoQueryError)?;
-        
+
         if deleted_result.deleted_count == 0 {
-            return Err(ObjNotFound)
+            return Err(ObjNotFound);
         }
-        
+
         Ok(oid.to_hex())
     }
 
