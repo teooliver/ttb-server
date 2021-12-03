@@ -12,8 +12,6 @@ pub struct ClientSchema {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ClientRequest {
     pub name: String,
-    // pub created_at: DateTime,
-    // pub updated_at: DateTime,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

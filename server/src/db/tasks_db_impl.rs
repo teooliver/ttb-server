@@ -128,7 +128,6 @@ impl DB {
             let doc_real = doc.unwrap();
             let id = doc_real.get_str("_id")?;
             let tasks = doc_real.get_array("tasks")?;
-            // let total_time = doc_real.get_i32("total_time").unwrap_or(10000);
             let total_time = doc_real.get_f64("total_time").unwrap_or(10000.0);
 
             for item in tasks {
@@ -172,7 +171,7 @@ impl DB {
             let grouped_tasks = TasksGroupedByDate {
                 _id: id.to_string(),
                 tasks: tasks_vec.to_owned(),
-                total_time: total_time,
+                total_time,
             };
 
             grouped_tasks_vec.push(grouped_tasks);
@@ -193,7 +192,6 @@ impl DB {
             .map_err(MongoQueryError)?;
 
         if document.is_none() {
-            // return error::Err(warp::reject::not_found());
             return Err(ObjNotFound);
         }
 
@@ -238,12 +236,6 @@ impl DB {
         let chrono_endtime: chrono::DateTime<Utc> = _entry.end_time.parse().unwrap();
         let end_time: bson::DateTime = chrono_endtime.into();
         let project: Option<ObjectId> = _entry.project.clone();
-
-        println!("GOT HERE Inside Task");
-
-        println!("{:?}", chrono_dt);
-        println!("{:?}", chrono_endtime);
-        println!("{:?}", initial_time);
 
         let query = doc! {
             "_id": oid,

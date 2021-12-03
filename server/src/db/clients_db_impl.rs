@@ -60,7 +60,6 @@ impl DB {
             .map_err(MongoQueryError)?;
 
         if document.is_none() {
-            // return error::Err(warp::reject::not_found());
             return Err(ObjNotFound);
         }
 

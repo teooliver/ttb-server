@@ -1,7 +1,7 @@
 use crate::db::DB;
 use crate::models::client::ClientRequest;
 use crate::WebResult;
-use warp::{http::StatusCode, reject, reply::json, Reply};
+use warp::{reject, reply::json, Reply};
 
 pub async fn fetch_all_clients_handler(db: DB) -> WebResult<impl Reply> {
     let tasks = db.get_all_clients().await.map_err(|e| reject::custom(e))?;
@@ -18,7 +18,7 @@ pub async fn create_client_handler(body: ClientRequest, db: DB) -> WebResult<imp
         .create_client(&body)
         .await
         .map_err(|e| reject::custom(e))?;
-    // TODO: Return the created object
+
     Ok(json(&client))
 }
 

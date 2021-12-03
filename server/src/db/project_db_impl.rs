@@ -19,7 +19,6 @@ impl DB {
         let client = doc.get_object_id("client")?;
         let name = doc.get_str("name")?;
         let color = doc.get_str("color")?;
-        // let estimate = doc.get_str("estimate")?;
         let created_at = doc.get_datetime("created_at")?;
         let updated_at = doc.get_datetime("updated_at")?;
 
@@ -28,7 +27,6 @@ impl DB {
             client: client.to_hex(),
             name: name.to_owned(),
             color: color.to_owned(),
-            // estimate: estimate.to_owned(),
             created_at: created_at.to_chrono().to_rfc3339(),
             updated_at: updated_at.to_chrono().to_rfc3339(),
         };
@@ -48,7 +46,6 @@ impl DB {
             let name = project_doc.get_str("name")?;
             let color = project_doc.get_str("color")?;
             let client_name = project_doc.get_str("client_name")?;
-            // let estimate = project_doc.get_str("estimate")?;
 
             // Need Better Names
             let proj = ProjectAfterAggregation {
@@ -56,7 +53,6 @@ impl DB {
                 name: name.to_string(),
                 color: color.to_string(),
                 client_name: client_name.to_string(),
-                // estimate: estimate.to_string(),
             };
 
             projects_vec.push(proj);
@@ -113,7 +109,6 @@ impl DB {
                 "name": "$name",
                 "color": "$color",
                 "client_name": { "$arrayElemAt": ["$client_name.name", 0] },
-                // "estimate": "$estimate",
                 "subprojects": "$subprojects",
             },
         };
@@ -150,7 +145,6 @@ impl DB {
                 doc! {
                 "name": _entry.name.clone(),
                 "color": _entry.color.clone(),
-                // "estimate": _entry.estimate.clone(),
                 "client": oid,
                 "created_at": chrono::Utc::now().clone(),
                 "updated_at": chrono::Utc::now().clone(),

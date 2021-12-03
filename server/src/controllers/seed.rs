@@ -1,9 +1,6 @@
 use crate::db::DB;
 use crate::error::Error::InvalidIDError;
-
-use crate::models::task::TaskRequest;
 use crate::{models::project::ProjectRequest, WebResult};
-use chrono::SecondsFormat;
 use fake::{self, Fake};
 use mongodb::bson::Document;
 use mongodb::bson::{doc, oid::ObjectId};
@@ -48,13 +45,11 @@ pub fn create_project(clients_ids: Vec<String>) -> ProjectRequest {
     let client_id = ObjectId::parse_str(clients_ids[rng_client_index].to_string())
         .map_err(|_| InvalidIDError(clients_ids[rng_client_index].to_owned()))
         .unwrap();
-    // let client_id = clients_ids[rng_client_index].to_string();
 
     let new_project = ProjectRequest {
         client: client_id,
         name: fake::faker::company::en::CompanyName().fake(),
         color: PROJECT_COLORS[rng_color_index].to_string(),
-        // estimate: "".to_string(),
     };
 
     new_project
