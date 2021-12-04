@@ -23,10 +23,6 @@ pub const PROJECT_COLORS: [&str; 10] = [
 
 pub const TIME_IN_SECONDS_OPTIONS: [i32; 7] = [3600, 1800, 5400, 3450, 1600, 1954, 7200];
 
-// pub const CLIENT_NAMES = [];
-// pub const PROJECT_NAMES = [];
-// pub const TASK_NAMES = [];
-
 pub fn generate_clients_data(amount: u8) -> Vec<mongodb::bson::Document> {
     let mut clients: Vec<mongodb::bson::Document> = vec![];
 
@@ -70,7 +66,6 @@ pub fn generate_projects_data(
             "client": project.client,
             "name": project.name.to_string(),
             "color": project.color.to_string(),
-            // "estimate": project.estimate.to_string(),
             "created_at": chrono::Utc::now().clone(),
             "updated_at": chrono::Utc::now().clone(),
         });
@@ -88,8 +83,6 @@ fn create_task(project_ids: Vec<String>) -> Document {
 
     let random_time_in_seconds =
         TIME_IN_SECONDS_OPTIONS[rand::thread_rng().gen_range(0..TIME_IN_SECONDS_OPTIONS.len())];
-
-    // let dt = Utc.ymd(2021, 12, 1).and_hms(9, 00, 00);
 
     let random_amount_of_days = rand::thread_rng().gen_range(0..=10);
 
