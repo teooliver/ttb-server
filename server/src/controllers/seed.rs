@@ -111,7 +111,7 @@ fn create_task(project_ids: Vec<String>) -> Document {
     // );
 
     println!("INITIAL {:?}", fake_initial_date);
-    println!("EN {:?}", fake_end_date);
+    println!("END {:?}", fake_end_date);
     println!("AMOUNT OF DAYS {:?}", amount_of_days);
     println!("Random DATE {:?}", random_date);
 
