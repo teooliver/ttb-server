@@ -91,34 +91,19 @@ fn create_task(project_ids: Vec<String>) -> Document {
 
     // let dt = Utc.ymd(2021, 12, 1).and_hms(9, 00, 00);
 
-    // let fake_initial_date = fake::faker::chrono::raw::DateTimeBetween(dt, dt, Utc::now());
-    // const fakeInitialDate = faker.date.between(
-    //   new Date(fiveDaysAgo),
-    //   new Date()
-    // );
-
     let random_amount_of_days = rand::thread_rng().gen_range(0..=10);
 
     let amount_of_days = Duration::days(random_amount_of_days);
 
     let random_date = Utc::now() - amount_of_days;
 
-    let fake_initial_date = Utc::now() - Duration::seconds(random_time_in_seconds as i64);
-    let fake_end_date = Utc::now() + Duration::seconds(random_time_in_seconds as i64);
-
-    // const fakeEndDate = new Date(
-    //   fakeInitialDate.getTime() + randomTimeInSeconds * 1000
-    // );
-
-    println!("INITIAL {:?}", fake_initial_date);
-    println!("END {:?}", fake_end_date);
-    println!("AMOUNT OF DAYS {:?}", amount_of_days);
-    println!("Random DATE {:?}", random_date);
+    let fake_initial_date = random_date - Duration::seconds(random_time_in_seconds as i64);
+    let fake_end_date = random_date + Duration::seconds(random_time_in_seconds as i64);
 
     let new_task = doc! {
         "name": fake::faker::company::en::CompanyName().fake::<String>().to_string(),
-        "initial_time": chrono::Utc::now(),
-        "end_time": chrono::Utc::now(),
+        "initial_time": fake_initial_date,
+        "end_time": fake_end_date,
         "project": Some(project_id),
         "created_at": chrono::Utc::now(),
         "updated_at": chrono::Utc::now(),
