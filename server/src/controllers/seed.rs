@@ -1,6 +1,7 @@
 use crate::db::DB;
 use crate::error::Error::InvalidIDError;
 use crate::{models::project::ProjectRequest, WebResult};
+use chrono::{prelude::*, Duration};
 use fake::{self, Fake};
 use mongodb::bson::Document;
 use mongodb::bson::{doc, oid::ObjectId};
@@ -19,6 +20,8 @@ pub const PROJECT_COLORS: [&str; 10] = [
     "#878e99ff",
     "#7f6a93ff",
 ];
+
+pub const TIME_IN_SECONDS_OPTIONS: [i32; 7] = [3600, 1800, 5400, 3450, 1600, 1954, 7200];
 
 // pub const CLIENT_NAMES = [];
 // pub const PROJECT_NAMES = [];
@@ -82,6 +85,35 @@ fn create_task(project_ids: Vec<String>) -> Document {
     let project_id = ObjectId::parse_str(project_ids[rng_project_index].to_string())
         .map_err(|_| InvalidIDError(project_ids[rng_project_index].to_owned()))
         .unwrap();
+
+    let random_time_in_seconds =
+        TIME_IN_SECONDS_OPTIONS[rand::thread_rng().gen_range(0..TIME_IN_SECONDS_OPTIONS.len())];
+
+    // let dt = Utc.ymd(2021, 12, 1).and_hms(9, 00, 00);
+
+    // let fake_initial_date = fake::faker::chrono::raw::DateTimeBetween(dt, dt, Utc::now());
+    // const fakeInitialDate = faker.date.between(
+    //   new Date(fiveDaysAgo),
+    //   new Date()
+    // );
+
+    let random_amount_of_days = rand::thread_rng().gen_range(0..=10);
+
+    let amount_of_days = Duration::days(random_amount_of_days);
+
+    let random_date = Utc::now() - amount_of_days;
+
+    let fake_initial_date = Utc::now() - Duration::seconds(random_time_in_seconds as i64);
+    let fake_end_date = Utc::now() + Duration::seconds(random_time_in_seconds as i64);
+
+    // const fakeEndDate = new Date(
+    //   fakeInitialDate.getTime() + randomTimeInSeconds * 1000
+    // );
+
+    println!("INITIAL {:?}", fake_initial_date);
+    println!("EN {:?}", fake_end_date);
+    println!("AMOUNT OF DAYS {:?}", amount_of_days);
+    println!("Random DATE {:?}", random_date);
 
     let new_task = doc! {
         "name": fake::faker::company::en::CompanyName().fake::<String>().to_string(),
