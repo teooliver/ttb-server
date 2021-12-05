@@ -5,6 +5,7 @@ use serde::{self, Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TaskSchema {
+    // pub user: ObjectId,
     pub _id: ObjectId,
     pub name: String,
     pub project: Option<ObjectId>,
@@ -20,6 +21,7 @@ pub struct TaskSchema {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TaskRequest {
+    // pub user: ObjectId,
     pub name: String,
     pub initial_time: String,
     pub end_time: String,
@@ -28,6 +30,7 @@ pub struct TaskRequest {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TaskResponse {
+    // pub user: ObjectId,
     pub _id: String,
     pub name: String,
     pub initial_time: String,
@@ -39,6 +42,7 @@ pub struct TaskResponse {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TasksGroupedByDate {
+    // pub user: ObjectId,
     pub _id: String,
     pub tasks: Vec<TaskAfterGrouped>,
     pub total_time: f64,
