@@ -143,7 +143,7 @@ pub async fn seed_tasks(db: DB) -> WebResult<impl Reply> {
 
     let projects_ids = db.get_all_projects_ids().await?;
 
-    db.create_many_tasks(generate_tasks_data(10, projects_ids))
+    db.create_many_tasks(generate_tasks_data(50, projects_ids))
         .await?;
 
     Ok(StatusCode::OK)
