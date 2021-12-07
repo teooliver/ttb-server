@@ -10,7 +10,7 @@ use mongodb::Collection;
 use super::{DB, DB_NAME};
 
 impl DB {
-    fn get_projects_collection(&self) -> Collection<Document> {
+    pub fn get_projects_collection(&self) -> Collection<Document> {
         self.client.database(DB_NAME).collection("projects")
     }
 
@@ -24,7 +24,7 @@ impl DB {
 
         let project = ProjectResponse {
             _id: id.to_hex(),
-            client: client.to_hex(),
+            client: Some(client.to_hex()),
             name: name.to_owned(),
             color: color.to_owned(),
             created_at: created_at.to_chrono().to_rfc3339(),
@@ -136,8 +136,13 @@ impl DB {
     }
 
     pub async fn create_project(&self, _entry: &ProjectRequest) -> Result<Bson> {
-        let oid = ObjectId::parse_str(_entry.client.to_hex())
-            .map_err(|_| InvalidIDError(_entry.client.to_hex()))?;
+        let mut client_opt: Option<ObjectId> = None;
+
+        if !_entry.client.is_none() {
+            let oid = ObjectId::parse_str(_entry.client.clone().unwrap().to_string())
+                .map_err(|_| InvalidIDError(_entry.client.clone().unwrap().to_string()))?;
+            client_opt = Some(oid);
+        };
 
         let new_project = self
             .get_projects_collection()
@@ -145,7 +150,7 @@ impl DB {
                 doc! {
                 "name": _entry.name.clone(),
                 "color": _entry.color.clone(),
-                "client": oid,
+                "client": client_opt,
                 "created_at": chrono::Utc::now().clone(),
                 "updated_at": chrono::Utc::now().clone(),
                 },

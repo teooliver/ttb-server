@@ -4,7 +4,7 @@ use serde::{self, Deserialize, Serialize};
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ProjectSchema {
     pub _id: String, //ObjectId
-    pub client: String,
+    pub client: Option<ObjectId>,
     pub name: String,
     pub color: String,
     pub created_at: DateTime,
@@ -14,14 +14,14 @@ pub struct ProjectSchema {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ProjectRequest {
     pub name: String,
-    pub client: ObjectId,
+    pub client: Option<String>,
     pub color: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ProjectResponse {
     pub _id: String, //ObjectId
-    pub client: String,
+    pub client: Option<String>,
     pub name: String,
     pub color: String,
     pub created_at: String,

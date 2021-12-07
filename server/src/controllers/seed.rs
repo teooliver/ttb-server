@@ -37,20 +37,24 @@ pub fn generate_clients_data(amount: u8) -> Vec<mongodb::bson::Document> {
     clients
 }
 
+// Create Project Request?
 pub fn create_project(clients_ids: Vec<String>) -> ProjectRequest {
     let rng_color_index = rand::thread_rng().gen_range(0..(PROJECT_COLORS.len() - 1));
     let rng_client_index = rand::thread_rng().gen_range(0..(clients_ids.len() - 1));
 
-    let client_id = ObjectId::parse_str(clients_ids[rng_client_index].to_string())
-        .map_err(|_| InvalidIDError(clients_ids[rng_client_index].to_owned()))
-        .unwrap();
+    let client_id = &clients_ids[rng_client_index];
+
+    // let client_id = ObjectId::parse_str(clients_ids[rng_client_index].to_string())
+    //     .map_err(|_| InvalidIDError(clients_ids[rng_client_index].to_owned()))
+    //     .unwrap();
 
     let new_project = ProjectRequest {
-        client: client_id,
+        client: Some(client_id.clone()),
         name: fake::faker::company::en::CompanyName().fake(),
         color: PROJECT_COLORS[rng_color_index].to_string(),
     };
 
+    println!("{:?}", new_project);
     new_project
 }
 
@@ -62,8 +66,13 @@ pub fn generate_projects_data(
 
     for _n in 1..amount {
         let project = create_project(clients_ids.clone());
+
+        let client_id = ObjectId::parse_str(project.client.unwrap().to_string())
+            .map_err(|_| InvalidIDError("hello".to_owned()))
+            .unwrap();
+
         projects.push(doc! {
-            "client": project.client,
+            "client": client_id,
             "name": project.name.to_string(),
             "color": project.color.to_string(),
             "created_at": chrono::Utc::now().clone(),

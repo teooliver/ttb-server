@@ -111,6 +111,22 @@ impl DB {
             return Err(ObjNotFound);
         }
 
+        let client_query = doc! {
+            "client": oid,
+        };
+
+        let update_doc = doc! {
+            "$set": {
+                "client": null,
+                }
+        };
+
+        // Delete client from all projects
+        self.get_projects_collection()
+            .update_many(client_query, update_doc, None)
+            .await
+            .map_err(MongoQueryError)?;
+
         Ok(oid.to_hex())
     }
 
