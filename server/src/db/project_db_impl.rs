@@ -77,11 +77,6 @@ impl DB {
             .await
             .map_err(MongoQueryError)?;
 
-        // if document == None {
-        //     // return error::Err(warp::reject::not_found());
-        //     return Err(ObjNotFound);
-        // }
-
         let result = self.doc_to_project(&document.expect("Document not found"))?;
 
         Ok(result)
