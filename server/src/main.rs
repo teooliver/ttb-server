@@ -97,6 +97,11 @@ async fn main() -> Result<()> {
             .and_then(projects::fetch_all_projects_handler))
         .or(projects
             .and(warp::get())
+            .and(warp::path("all"))
+            .and(with_db(db.clone()))
+            .and_then(projects::fetch_projects_handler))
+        .or(projects
+            .and(warp::get())
             .and(warp::path::param())
             .and(with_db(db.clone()))
             .and_then(projects::fetch_project_handler))

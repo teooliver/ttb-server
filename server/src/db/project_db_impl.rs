@@ -16,15 +16,22 @@ impl DB {
 
     pub fn doc_to_project(&self, doc: &Document) -> Result<ProjectResponse> {
         let id = doc.get_object_id("_id")?;
-        let client = doc.get_object_id("client")?;
+        let client = doc.get_object_id("client").ok();
         let name = doc.get_str("name")?;
         let color = doc.get_str("color")?;
         let created_at = doc.get_datetime("created_at")?;
         let updated_at = doc.get_datetime("updated_at")?;
 
+        fn client_id(client: Option<ObjectId>) -> Option<String> {
+            match client {
+                Some(client) => Some(client.to_hex()),
+                None => None,
+            }
+        }
+
         let project = ProjectResponse {
             _id: id.to_hex(),
-            client: Some(client.to_hex()),
+            client: client_id(client),
             name: name.to_owned(),
             color: color.to_owned(),
             created_at: created_at.to_chrono().to_rfc3339(),
@@ -103,14 +110,14 @@ impl DB {
                 "_id": "$_id",
                 "name": "$name",
                 "color": "$color",
-                "client_name": { "$arrayElemAt": ["$client_name.name", 0] },
+                "client_name": { "$ifNull": [ {"$arrayElemAt": ["$client_name.name", 0]}, "No Client"] },
                 "subprojects": "$subprojects",
             },
         };
 
         let group = doc! {
             "$group": {
-                "_id": "$client_name",
+                "_id": "$client_name" ,
                 "projects": { "$push": "$$ROOT" },
              },
         };
@@ -128,6 +135,22 @@ impl DB {
         }
 
         Ok(results)
+    }
+
+    pub async fn get_all_projects(&self) -> Result<Vec<ProjectResponse>> {
+        let mut cursor = self
+            .get_projects_collection()
+            .find(None, None)
+            .await
+            .map_err(MongoQueryError)?;
+
+        let mut result: Vec<ProjectResponse> = Vec::new();
+
+        while let Some(doc) = cursor.next().await {
+            result.push(self.doc_to_project(&doc?)?);
+        }
+
+        Ok(result)
     }
 
     pub async fn create_project(&self, _entry: &ProjectRequest) -> Result<Bson> {
