@@ -12,8 +12,6 @@ pub async fn fetch_all_projects_handler(db: DB) -> WebResult<impl Reply> {
 }
 
 pub async fn fetch_projects_handler(db: DB) -> WebResult<impl Reply> {
-    // fetch all projects
-    println!("HELLO THERE");
     let projects = db.get_all_projects().await.map_err(|e| reject::custom(e))?;
     Ok(json(&projects))
 }
@@ -33,10 +31,11 @@ pub async fn create_project_handler(body: ProjectRequest, db: DB) -> WebResult<i
 }
 
 pub async fn delete_project_handler(id: String, db: DB) -> WebResult<impl Reply> {
-    db.delete_project(&id)
+    let deleted_id = db
+        .delete_project(&id)
         .await
         .map_err(|e| reject::custom(e))?;
-    Ok(StatusCode::OK)
+    Ok(json(&deleted_id))
 }
 
 pub async fn delete_all_projects_handler(db: DB) -> WebResult<impl Reply> {

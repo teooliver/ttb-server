@@ -9,7 +9,7 @@ use mongodb::Collection;
 use super::{DB, DB_NAME};
 
 impl DB {
-    fn get_tasks_collection(&self) -> Collection<Document> {
+    pub fn get_tasks_collection(&self) -> Collection<Document> {
         self.client.database(DB_NAME).collection("tasks")
     }
 
@@ -18,14 +18,16 @@ impl DB {
         let name = doc.get_str("name")?;
         let initial_time = doc.get_datetime("initial_time")?;
         let end_time = doc.get_datetime("end_time")?;
-        let project = doc.get_object_id("project")?;
+        let project = doc.get_object_id("project").ok();
         let created_at = doc.get_datetime("created_at")?;
         let updated_at = doc.get_datetime("updated_at")?;
 
-        // if project.is_none() {
-        //     // return error::Err(warp::reject::not_found());
-        //     return Err(ObjNotFound);
-        // }
+        fn proj_id(proj: Option<ObjectId>) -> Option<String> {
+            match proj {
+                Some(proj) => Some(proj.to_hex()),
+                None => None,
+            }
+        }
 
         let task = TaskResponse {
             _id: id.to_hex(),
@@ -38,7 +40,7 @@ impl DB {
             end_time: end_time
                 .to_chrono()
                 .to_rfc3339_opts(SecondsFormat::Secs, true),
-            project: Some(project.to_hex()),
+            project: proj_id(project),
             created_at: created_at
                 .to_chrono()
                 .to_rfc3339_opts(SecondsFormat::Secs, true),

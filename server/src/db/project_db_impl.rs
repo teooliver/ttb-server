@@ -180,17 +180,39 @@ impl DB {
         Ok(new_project.inserted_id)
     }
 
-    pub async fn delete_project(&self, id: &str) -> Result<()> {
+    pub async fn delete_project(&self, id: &str) -> Result<String> {
         let oid = ObjectId::parse_str(id).map_err(|_| InvalidIDError(id.to_owned()))?;
         let query = doc! {
             "_id": oid,
         };
-        self.get_projects_collection()
+
+        let deleted_result = self
+            .get_projects_collection()
             .delete_one(query, None)
             .await
             .map_err(MongoQueryError)?;
 
-        Ok(())
+        if deleted_result.deleted_count == 0 {
+            return Err(ObjNotFound);
+        }
+
+        let project_query = doc! {
+            "project": oid,
+        };
+
+        let update_doc = doc! {
+            "$set": {
+                "project": null,
+                }
+        };
+
+        // Delete client from all projects
+        self.get_tasks_collection()
+            .update_many(project_query, update_doc, None)
+            .await
+            .map_err(MongoQueryError)?;
+
+        Ok(oid.to_hex())
     }
 
     pub async fn delete_all_projects(&self) -> Result<()> {
