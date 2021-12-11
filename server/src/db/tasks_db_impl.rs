@@ -269,17 +269,23 @@ impl DB {
         Ok(())
     }
 
-    pub async fn delete_task(&self, id: &str) -> Result<()> {
+    pub async fn delete_task(&self, id: &str) -> Result<String> {
         let oid = ObjectId::parse_str(id).map_err(|_| InvalidIDError(id.to_owned()))?;
         let query = doc! {
             "_id": oid,
         };
-        self.get_tasks_collection()
+        let deleted_result = self
+            .get_tasks_collection()
             .delete_one(query, None)
             .await
             .map_err(MongoQueryError)?;
 
-        Ok(())
+        if deleted_result.deleted_count == 0 {
+            return Err(ObjNotFound);
+        }
+
+        // return id or task.
+        Ok(oid.to_hex())
     }
 
     pub async fn create_many_tasks(&self, _entry: Vec<mongodb::bson::Document>) -> Result<()> {

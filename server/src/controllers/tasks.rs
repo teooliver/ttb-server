@@ -42,7 +42,7 @@ pub async fn edit_task_handler(id: String, body: TaskRequest, db: DB) -> WebResu
     Ok(StatusCode::OK)
 }
 pub async fn delete_task_handler(id: String, db: DB) -> WebResult<impl Reply> {
-    db.delete_task(&id).await.map_err(|e| reject::custom(e))?;
+    let taks_id = db.delete_task(&id).await.map_err(|e| reject::custom(e))?;
     // Return the deleted object
-    Ok(StatusCode::OK)
+    Ok(json(&taks_id))
 }
