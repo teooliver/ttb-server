@@ -160,6 +160,7 @@ impl DB {
             let oid = ObjectId::parse_str(_entry.client.clone().unwrap().to_string())
                 .map_err(|_| InvalidIDError(_entry.client.clone().unwrap().to_string()))?;
             client_opt = Some(oid);
+            println!("IS NOT NONE {:?}", client_opt);
         };
 
         let new_project = self

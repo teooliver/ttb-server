@@ -22,7 +22,7 @@ pub async fn fetch_project_handler(id: String, db: DB) -> WebResult<impl Reply> 
 }
 
 pub async fn create_project_handler(body: ProjectRequest, db: DB) -> WebResult<impl Reply> {
-    println!("{:?}", body);
+    println!("BODY  {:?}", body);
     let project = db
         .create_project(&body)
         .await

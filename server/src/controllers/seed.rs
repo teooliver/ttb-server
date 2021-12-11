@@ -44,17 +44,12 @@ pub fn create_project(clients_ids: Vec<String>) -> ProjectRequest {
 
     let client_id = &clients_ids[rng_client_index];
 
-    // let client_id = ObjectId::parse_str(clients_ids[rng_client_index].to_string())
-    //     .map_err(|_| InvalidIDError(clients_ids[rng_client_index].to_owned()))
-    //     .unwrap();
-
     let new_project = ProjectRequest {
         client: Some(client_id.clone()),
         name: fake::faker::company::en::CompanyName().fake(),
         color: PROJECT_COLORS[rng_color_index].to_string(),
     };
 
-    println!("{:?}", new_project);
     new_project
 }
 
