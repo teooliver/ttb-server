@@ -11,7 +11,7 @@ type Result<T> = std::result::Result<T, error::Error>;
 type WebResult<T> = std::result::Result<T, Rejection>;
 
 use crate::{
-    controllers::{clients, projects, seed, tasks},
+    controllers::{clients, experiments, projects, seed, tasks},
     db::DB,
 };
 
@@ -165,10 +165,19 @@ async fn main() -> Result<()> {
             .and(with_db(db.clone()))
             .and_then(seed::remove_all_data));
 
+    let experiments = warp::path("experiments");
+
+    let experiments_routes = experiments
+        .and(warp::get())
+        .and(with_db(db.clone()))
+        .and(warp::query::<experiments::FooQuery>())
+        .and_then(experiments::pagination_with_query);
+
     let routes = task_routes
         .or(projects_routes)
         .or(client_routes)
         .or(seed_routes)
+        .or(experiments_routes)
         .with(cors)
         .recover(error::handle_rejection);
 
