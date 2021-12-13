@@ -68,7 +68,23 @@ impl DB {
         Ok(result)
     }
 
-    pub async fn get_tasks_grouped_by_date(&self) -> Result<Vec<TasksGroupedByDate>> {
+    pub async fn get_tasks_grouped_by_date(
+        &self,
+        page: Option<u32>,
+        limit: Option<u32>,
+    ) -> Result<Vec<TasksGroupedByDate>> {
+        const DEFAULT_PAGE: u32 = 1;
+        const DEFAULT_LIMIT: u32 = 10;
+
+        if page.unwrap_or(DEFAULT_PAGE) == 0 {
+            return Err(PageError);
+        }
+        if limit.unwrap_or(DEFAULT_LIMIT) == 0 {
+            return Err(LimitError);
+        }
+
+        let skip = (page.unwrap_or(DEFAULT_PAGE) - 1) * limit.unwrap_or(DEFAULT_LIMIT);
+
         let lookup_projects = doc! {
             "$lookup": {
                 "from": "projects",
@@ -116,7 +132,25 @@ impl DB {
             },
         };
 
-        let pipeline = vec![lookup_projects, lookup_clients, project, group, sort];
+        //TODO: INSERT STAGE TO COUNT AMOUNT OF OBJECTS
+
+        let skip_agg = doc! {
+            "$skip": skip
+        };
+
+        let limit_agg = doc! {
+            "$limit": limit.unwrap_or(DEFAULT_LIMIT)
+        };
+
+        let mut pipeline = vec![
+            lookup_projects,
+            lookup_clients,
+            project,
+            group,
+            sort,
+            skip_agg,
+            limit_agg,
+        ];
 
         let mut cursor = self
             .get_tasks_collection()

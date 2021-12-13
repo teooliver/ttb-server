@@ -170,7 +170,7 @@ async fn main() -> Result<()> {
     let experiments_routes = experiments
         .and(warp::get())
         .and(with_db(db.clone()))
-        .and(warp::query::<experiments::FooQuery>())
+        .and(warp::query::<experiments::PaginationQuery>())
         .and_then(experiments::pagination_with_query);
 
     let routes = task_routes

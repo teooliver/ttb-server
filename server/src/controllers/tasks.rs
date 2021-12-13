@@ -9,7 +9,7 @@ pub async fn fetch_all_tasks_handler(db: DB) -> WebResult<impl Reply> {
 
 pub async fn fetch_tasks_grouped_by_date(db: DB) -> WebResult<impl Reply> {
     let tasks = db
-        .get_tasks_grouped_by_date()
+        .get_tasks_grouped_by_date(None, None)
         .await
         .map_err(|e| reject::custom(e))?;
     Ok(json(&tasks))

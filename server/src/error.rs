@@ -16,6 +16,10 @@ pub enum Error {
     InvalidIDError(String),
     #[error("Object Not Found")]
     ObjNotFound,
+    #[error("Page should be greater then 0")]
+    PageError,
+    #[error("Limit should be at least 1")]
+    LimitError,
 }
 
 #[derive(Serialize)]
@@ -40,6 +44,14 @@ pub async fn handle_rejection(err: Rejection) -> std::result::Result<Box<dyn Rep
             Error::ObjNotFound => {
                 code = StatusCode::NOT_FOUND;
                 message = "Not Found";
+            }
+            Error::PageError => {
+                code = StatusCode::BAD_REQUEST;
+                message = "Invalid page number. Page number should be greater then 0";
+            }
+            Error::LimitError => {
+                code = StatusCode::BAD_REQUEST;
+                message = "Invalid limit number. Limit number should be at least 1";
             }
             _ => {
                 eprintln!("unhandled application error: {:?}", err);
