@@ -75,6 +75,7 @@ impl DB {
         page: Option<u32>,
         limit: Option<u32>,
     ) -> Result<Vec<TaskGroupDates>> {
+        // c1 Maybe these should come from the controller
         const DEFAULT_PAGE: u32 = 1;
         const DEFAULT_LIMIT: u32 = 10;
 
@@ -86,6 +87,7 @@ impl DB {
         }
 
         let skip = (page.unwrap_or(DEFAULT_PAGE) - 1) * limit.unwrap_or(DEFAULT_LIMIT);
+        // c1 end
 
         let lookup_projects = doc! {
             "$lookup": {
@@ -130,7 +132,7 @@ impl DB {
 
         let facet = doc! {
             "$facet": {
-                "total": [
+                "details": [
                     { "$count": "count" },
                 ],
                 "dates": [
@@ -141,6 +143,8 @@ impl DB {
             }
         };
 
+        // TODO: MAYBE $unwind details?
+
         let mut pipeline = vec![lookup_projects, lookup_clients, project, group, facet];
 
         let mut cursor = self
@@ -150,10 +154,17 @@ impl DB {
 
         let mut grouped_tasks_vec: Vec<TaskGroupDates> = vec![];
         let mut tasks_vec: Vec<TaskAfterGrouped> = vec![];
+        let mut total_items: i32 = 0;
 
         while let Some(doc) = cursor.next().await {
             let doc_real = doc.unwrap();
+            let details = doc_real.get_array("details")?;
+
+            let count = details[0].as_document().unwrap().get_i32("count")?;
+            total_items = count;
+
             let dates = doc_real.get_array("dates")?;
+
             let mut id: &str;
             let total_time: f64;
 
@@ -211,6 +222,11 @@ impl DB {
                 grouped_tasks_vec.push(grouped_tasks);
             }
         }
+
+        println!("TOAL ITEMS {:?}", total_items);
+        println!("PAGE {:?}", page.unwrap_or(DEFAULT_PAGE));
+        println!("LIMIT {:?}", limit.unwrap_or(DEFAULT_LIMIT));
+        println!("SKIP {:?}", skip);
 
         Ok(grouped_tasks_vec.to_vec())
     }

@@ -12,7 +12,7 @@ pub struct PaginationQuery {
 pub async fn pagination_with_query(db: DB, query: PaginationQuery) -> WebResult<impl Reply> {
     // Should query have defaults values?
 
-    println!("hwekjhrwek");
+    // println!("hwekjhrwek");
 
     let tasks = db
         .get_tasks_grouped_by_date(query.page, query.size)
@@ -20,12 +20,12 @@ pub async fn pagination_with_query(db: DB, query: PaginationQuery) -> WebResult<
         .map_err(|e| reject::custom(e))?;
 
     if !query.page.is_none() {
-        println!("Page {:?}", query.page);
+        // println!("Page {:?}", query.page);
         // let slice = &tasks[0..2];
         // return Ok(json(slice));
     }
     if !query.size.is_none() {
-        println!("Size {:?}", query.size);
+        // println!("Size {:?}", query.size);
     }
 
     // response should be something like to tasks:
