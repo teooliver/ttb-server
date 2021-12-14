@@ -227,7 +227,7 @@ impl DB {
         println!("PAGE {:?}", page.unwrap_or(DEFAULT_PAGE));
         println!("LIMIT {:?}", limit.unwrap_or(DEFAULT_LIMIT));
         println!("SKIP {:?}", skip);
-
+        // Return a HashMap with `grouped_tasks_vec` and `total_items`
         Ok(grouped_tasks_vec.to_vec())
     }
 
