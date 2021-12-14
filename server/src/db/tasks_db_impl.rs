@@ -141,22 +141,6 @@ impl DB {
             }
         };
 
-        // let sort = doc! {
-        //      "$sort": {
-        //         "_id": -1,
-        //     },
-        // };
-
-        //TODO: INSERT STAGE TO COUNT AMOUNT OF OBJECTS
-
-        // let skip_agg = doc! {
-        //     "$skip": skip
-        // };
-
-        // let limit_agg = doc! {
-        //     "$limit": limit.unwrap_or(DEFAULT_LIMIT)
-        // };
-
         let mut pipeline = vec![lookup_projects, lookup_clients, project, group, facet];
 
         let mut cursor = self
@@ -174,16 +158,12 @@ impl DB {
             let total_time: f64;
 
             for date in dates {
-                println!("{:?}", date);
-                // let deserialized_dates: TaskGroupDates = bson::from_bson(date.clone()).unwrap();
-                // println!("{:?}", deserialized_dates);
                 let tasks_doc = date.as_document().unwrap();
                 let id = tasks_doc.get_str("_id")?;
                 let total_time = tasks_doc.get_f64("total_time").unwrap_or(10000.0);
                 let tasks = tasks_doc.get_array("tasks")?;
-                println!("TASKS {:?}", tasks);
+
                 for item in tasks {
-                    println!("ARRAY ITEM {:?}", item);
                     let task_document = item.as_document().unwrap();
 
                     let _id = task_document.get_object_id("_id")?.to_hex();
