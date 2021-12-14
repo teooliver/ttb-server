@@ -1,4 +1,6 @@
-use crate::models::task::{TaskAfterGrouped, TaskRequest, TaskResponse, TasksGroupedByDate};
+use crate::models::task::{
+    TaskAfterGrouped, TaskGroupDates, TaskRequest, TaskResponse, TasksGroupedByDate,
+};
 use crate::{error::Error::*, Result};
 use chrono::prelude::*;
 use futures::StreamExt;
@@ -72,7 +74,7 @@ impl DB {
         &self,
         page: Option<u32>,
         limit: Option<u32>,
-    ) -> Result<Vec<TasksGroupedByDate>> {
+    ) -> Result<Vec<TaskGroupDates>> {
         const DEFAULT_PAGE: u32 = 1;
         const DEFAULT_LIMIT: u32 = 10;
 
@@ -126,91 +128,108 @@ impl DB {
             },
         };
 
-        let sort = doc! {
-             "$sort": {
-                "_id": -1,
-            },
+        let facet = doc! {
+            "$facet": {
+                "total": [
+                    { "$count": "count" },
+                ],
+                "dates": [
+                    { "$sort": { "_id": -1 } },
+                    { "$skip": skip },
+                    { "$limit": limit.unwrap_or(DEFAULT_LIMIT) },
+                ],
+            }
         };
+
+        // let sort = doc! {
+        //      "$sort": {
+        //         "_id": -1,
+        //     },
+        // };
 
         //TODO: INSERT STAGE TO COUNT AMOUNT OF OBJECTS
 
-        let skip_agg = doc! {
-            "$skip": skip
-        };
+        // let skip_agg = doc! {
+        //     "$skip": skip
+        // };
 
-        let limit_agg = doc! {
-            "$limit": limit.unwrap_or(DEFAULT_LIMIT)
-        };
+        // let limit_agg = doc! {
+        //     "$limit": limit.unwrap_or(DEFAULT_LIMIT)
+        // };
 
-        let mut pipeline = vec![
-            lookup_projects,
-            lookup_clients,
-            project,
-            group,
-            sort,
-            skip_agg,
-            limit_agg,
-        ];
+        let mut pipeline = vec![lookup_projects, lookup_clients, project, group, facet];
 
         let mut cursor = self
             .get_tasks_collection()
             .aggregate(pipeline, None)
             .await?;
 
-        let mut grouped_tasks_vec: Vec<TasksGroupedByDate> = vec![];
+        let mut grouped_tasks_vec: Vec<TaskGroupDates> = vec![];
         let mut tasks_vec: Vec<TaskAfterGrouped> = vec![];
 
         while let Some(doc) = cursor.next().await {
             let doc_real = doc.unwrap();
-            let id = doc_real.get_str("_id")?;
-            let tasks = doc_real.get_array("tasks")?;
-            let total_time = doc_real.get_f64("total_time").unwrap_or(10000.0);
+            let dates = doc_real.get_array("dates")?;
+            let mut id: &str;
+            let total_time: f64;
 
-            for item in tasks {
-                let task_document = item.as_document().unwrap();
+            for date in dates {
+                println!("{:?}", date);
+                // let deserialized_dates: TaskGroupDates = bson::from_bson(date.clone()).unwrap();
+                // println!("{:?}", deserialized_dates);
+                let tasks_doc = date.as_document().unwrap();
+                let id = tasks_doc.get_str("_id")?;
+                let total_time = tasks_doc.get_f64("total_time").unwrap_or(10000.0);
+                let tasks = tasks_doc.get_array("tasks")?;
+                println!("TASKS {:?}", tasks);
+                for item in tasks {
+                    println!("ARRAY ITEM {:?}", item);
+                    let task_document = item.as_document().unwrap();
 
-                let _id = task_document.get_object_id("_id")?.to_hex();
-                let name = task_document.get_str("name")?.to_string();
-                let initial_time = task_document
-                    .get_datetime("initial_time")?
-                    .to_chrono()
-                    .to_rfc3339_opts(SecondsFormat::Secs, true);
-                let end_time = task_document
-                    .get_datetime("end_time")?
-                    .to_chrono()
-                    .to_rfc3339_opts(SecondsFormat::Secs, true);
-                let project = task_document.get_str("project").ok();
+                    let _id = task_document.get_object_id("_id")?.to_hex();
+                    let name = task_document.get_str("name")?.to_string();
+                    let initial_time = task_document
+                        .get_datetime("initial_time")?
+                        .to_chrono()
+                        .to_rfc3339_opts(SecondsFormat::Secs, true);
+                    let end_time = task_document
+                        .get_datetime("end_time")?
+                        .to_chrono()
+                        .to_rfc3339_opts(SecondsFormat::Secs, true);
+                    let project = task_document.get_str("project").ok();
 
-                let project_color = task_document.get_str("project_color").ok();
+                    let project_color = task_document.get_str("project_color").ok();
 
-                let client = task_document.get_str("client").ok();
+                    let client = task_document.get_str("client").ok();
 
-                fn project_name(proj: Option<&str>) -> Option<String> {
-                    match proj {
-                        Some(proj) => Some(proj.to_string()),
-                        None => None,
+                    fn project_name(proj: Option<&str>) -> Option<String> {
+                        match proj {
+                            Some(proj) => Some(proj.to_string()),
+                            None => None,
+                        }
                     }
+
+                    let task = TaskAfterGrouped {
+                        _id,
+                        name,
+                        initial_time,
+                        end_time,
+                        project: project_name(project),
+                        project_color: project_name(project_color),
+                        client: project_name(client),
+                    };
+
+                    tasks_vec.push(task);
                 }
 
-                let task = TaskAfterGrouped {
-                    _id,
-                    name,
-                    initial_time,
-                    end_time,
-                    project: project_name(project),
-                    project_color: project_name(project_color),
-                    client: project_name(client),
+                let grouped_tasks = TaskGroupDates {
+                    _id: id.to_string(),
+                    tasks: tasks_vec.to_owned(),
+                    total_time,
                 };
 
-                tasks_vec.push(task);
+                grouped_tasks_vec.push(grouped_tasks);
             }
-            let grouped_tasks = TasksGroupedByDate {
-                _id: id.to_string(),
-                tasks: tasks_vec.to_owned(),
-                total_time,
-            };
-
-            grouped_tasks_vec.push(grouped_tasks);
         }
 
         Ok(grouped_tasks_vec.to_vec())

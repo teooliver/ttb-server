@@ -42,7 +42,17 @@ pub struct TaskResponse {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TasksGroupedByDate {
-    // pub user: ObjectId,
+    pub detail: Vec<TaskGroupDetail>,
+    pub dates: Vec<TaskGroupDates>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct TaskGroupDetail {
+    pub count: u32,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct TaskGroupDates {
     pub _id: String,
     pub tasks: Vec<TaskAfterGrouped>,
     pub total_time: f64,
