@@ -77,19 +77,14 @@ impl DB {
         page: Option<u32>,
         limit: Option<u32>,
     ) -> Result<TasksGroupedByDate> {
-        // c1 Maybe these should come from the controller
-        const DEFAULT_PAGE: u32 = 1;
-        const DEFAULT_LIMIT: u32 = 10;
-
-        if page.unwrap_or(DEFAULT_PAGE) == 0 {
+        if page.unwrap() == 0 {
             return Err(PageError);
         }
-        if limit.unwrap_or(DEFAULT_LIMIT) == 0 {
+        if limit.unwrap() == 0 {
             return Err(LimitError);
         }
 
-        let skip = (page.unwrap_or(DEFAULT_PAGE) - 1) * limit.unwrap_or(DEFAULT_LIMIT);
-        // c1 end
+        let skip = (page.unwrap() - 1) * limit.unwrap();
 
         let lookup_projects = doc! {
             "$lookup": {
@@ -140,7 +135,7 @@ impl DB {
                 "dates": [
                     { "$sort": { "_id": -1 } },
                     { "$skip": skip },
-                    { "$limit": limit.unwrap_or(DEFAULT_LIMIT) },
+                    { "$limit": limit },
                 ],
             }
         };
@@ -223,17 +218,11 @@ impl DB {
             }
         }
 
-        println!("TOAL ITEMS {:?}", total_items);
-        println!("PAGE {:?}", page.unwrap_or(DEFAULT_PAGE));
-        println!("LIMIT {:?}", limit.unwrap_or(DEFAULT_LIMIT));
-        println!("SKIP {:?}", skip);
-
         let agg_result = TasksGroupedByDate {
             total: total_items,
             result: grouped_tasks_vec.to_vec(),
         };
 
-        println!("Final STRUCT RES {:?}", agg_result);
         Ok(agg_result)
     }
 

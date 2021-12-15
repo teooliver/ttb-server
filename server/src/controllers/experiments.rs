@@ -12,8 +12,8 @@ pub struct PaginationQuery {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Pagination {
-    previous: String, //Option
-    next: String,     //Option
+    previous: Option<String>, //Option
+    next: Option<String>,     //Option
     total_pages: u32,
     total_items: i32,
     size: u32,
@@ -33,14 +33,6 @@ pub async fn pagination_with_query(db: DB, query: PaginationQuery) -> WebResult<
 
     let page = query.page.unwrap_or(DEFAULT_PAGE);
     let size = query.size.unwrap_or(DEFAULT_LIMIT);
-
-    // if page == 0 {
-    //     return reject::custom(PageError);
-    //     // return Err(PageError);
-    // }
-    // if size == 0 {
-    //     return reject::custom(LimitError);
-    // }
 
     let tasks = db
         .get_tasks_grouped_by_date(Some(page), Some(size))
@@ -64,13 +56,19 @@ pub async fn pagination_with_query(db: DB, query: PaginationQuery) -> WebResult<
     }
 
     let has_next_page = check_has_next_page(total_pages, page);
-    println!("Has NEXT page{}", has_next_page);
     let has_previous_page = check_has_previous_page(page);
-    println!("Has PREVIOUS page {}", has_previous_page);
 
     let pagination = Pagination {
-        previous: format!("/experiments?page={}&size={}", 3, 4),
-        next: format!("/experiments?page={}&size={}", 3, 4),
+        previous: if has_previous_page {
+            Some(format!("/experiments?page={}&size={}", page - 1, size))
+        } else {
+            None
+        },
+        next: if has_next_page {
+            Some(format!("/experiments?page={}&size={}", page + 1, size))
+        } else {
+            None
+        },
         total_pages,
         total_items: tasks.total,
         size,
@@ -83,27 +81,4 @@ pub async fn pagination_with_query(db: DB, query: PaginationQuery) -> WebResult<
     };
 
     Ok(json(&result))
-    // Ok(StatusCode::OK)
 }
-
-// response should be something like to tasks:
-// results: &tasks,
-// "paging":  {
-//    "previous":  "ksdjhfkdjfk/kjhfksd/ksdjhfsk",
-//    "next":  "ksdjhfkdjfk/kjhfksd/ksdjhfsk",
-//    "total_pages": 20,
-//    "total_items": 100000;
-//    "size": 5,
-//    "start": 0
-//}
-// "_links": {
-//     "base": "/tasks",
-//     "context": "",
-//     "next": "/rest/api/tasks/page?limit=5&start=5",
-//     "self": "/page"
-// },
-// "limit": 5,
-// "size": 5,
-// "start": 0
-
-// refs: https://developer.atlassian.com/server/confluence/pagination-in-the-rest-api/
