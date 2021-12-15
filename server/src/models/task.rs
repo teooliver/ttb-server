@@ -42,10 +42,8 @@ pub struct TaskResponse {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TasksGroupedByDate {
-    pub total: u32,
-    // page: u32,
-    // limit: u32
-    pub dates: Vec<TaskGroupDates>,
+    pub total: i32,
+    pub result: Vec<TaskGroupDates>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

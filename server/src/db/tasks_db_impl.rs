@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::models::task::{
     TaskAfterGrouped, TaskGroupDates, TaskRequest, TaskResponse, TasksGroupedByDate,
 };
@@ -74,7 +76,7 @@ impl DB {
         &self,
         page: Option<u32>,
         limit: Option<u32>,
-    ) -> Result<Vec<TaskGroupDates>> {
+    ) -> Result<TasksGroupedByDate> {
         // c1 Maybe these should come from the controller
         const DEFAULT_PAGE: u32 = 1;
         const DEFAULT_LIMIT: u32 = 10;
@@ -143,9 +145,7 @@ impl DB {
             }
         };
 
-        // TODO: MAYBE $unwind details?
-
-        let mut pipeline = vec![lookup_projects, lookup_clients, project, group, facet];
+        let pipeline = vec![lookup_projects, lookup_clients, project, group, facet];
 
         let mut cursor = self
             .get_tasks_collection()
@@ -227,8 +227,14 @@ impl DB {
         println!("PAGE {:?}", page.unwrap_or(DEFAULT_PAGE));
         println!("LIMIT {:?}", limit.unwrap_or(DEFAULT_LIMIT));
         println!("SKIP {:?}", skip);
-        // Return a HashMap with `grouped_tasks_vec` and `total_items`
-        Ok(grouped_tasks_vec.to_vec())
+
+        let agg_result = TasksGroupedByDate {
+            total: total_items,
+            result: grouped_tasks_vec.to_vec(),
+        };
+
+        println!("Final STRUCT RES {:?}", agg_result);
+        Ok(agg_result)
     }
 
     pub async fn find_task(&self, id: &str) -> Result<TaskResponse> {
