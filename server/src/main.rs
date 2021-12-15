@@ -65,6 +65,7 @@ async fn main() -> Result<()> {
             .and(warp::get())
             .and(warp::path("group"))
             .and(with_db(db.clone()))
+            .and(warp::query::<tasks::PaginationQuery>())
             .and_then(tasks::fetch_tasks_grouped_by_date))
         .or(tasks
             .and(warp::put())
