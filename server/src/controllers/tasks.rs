@@ -13,6 +13,8 @@ pub struct PaginationQuery {
 pub struct Pagination {
     previous: Option<String>, //Option
     next: Option<String>,     //Option
+    next_page: Option<u32>,
+    previous_page: Option<u32>,
     total_pages: u32,
     total_items: i32,
     size: u32,
@@ -64,12 +66,18 @@ pub async fn fetch_tasks_grouped_by_date(db: DB, query: PaginationQuery) -> WebR
 
     let pagination = Pagination {
         previous: if has_previous_page {
-            Some(format!("/experiments?page={}&size={}", page - 1, size))
+            Some(format!("/tasks/group?page={}&size={}", page - 1, size))
         } else {
             None
         },
         next: if has_next_page {
-            Some(format!("/experiments?page={}&size={}", page + 1, size))
+            Some(format!("/tasks/group?page={}&size={}", page + 1, size))
+        } else {
+            None
+        },
+        next_page: if has_next_page { Some(page + 1) } else { None },
+        previous_page: if has_previous_page {
+            Some(page - 1)
         } else {
             None
         },
