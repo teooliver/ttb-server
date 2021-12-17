@@ -106,7 +106,6 @@ pub async fn delete_all_tasks_handler(db: DB) -> WebResult<impl Reply> {
 }
 
 pub async fn edit_task_handler(id: String, body: TaskRequest, db: DB) -> WebResult<impl Reply> {
-    println!("GOT HERE Inside Task");
     db.edit_task(&id, &body)
         .await
         .map_err(|e| reject::custom(e))?;
