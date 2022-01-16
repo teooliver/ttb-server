@@ -1,4 +1,6 @@
 #[allow(dead_code)]
+#![warn(clippy::all)]
+
 mod controllers;
 mod db;
 mod error;
