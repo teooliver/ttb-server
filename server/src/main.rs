@@ -14,10 +14,7 @@ use tracing_subscriber::fmt::format::FmtSpan;
 type Result<T> = std::result::Result<T, error::Error>;
 type WebResult<T> = std::result::Result<T, Rejection>;
 
-use crate::{
-    controllers::{clients, experiments, projects, seed},
-    db::DB,
-};
+use crate::{controllers::experiments, db::DB};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -27,7 +24,7 @@ async fn main() -> Result<()> {
     let db = DB::init().await?;
 
     tracing_subscriber::fmt()
-        // Use the filter we built above to determine which traces to record.
+        // Determine which traces to record.
         .with_env_filter(log_filter)
         // Record an event when each span closes. This can be used to time our
         // routes' durations!
@@ -45,7 +42,6 @@ async fn main() -> Result<()> {
             // "Access-Control-Request-Headers",
             "content-type",
         ])
-        // .allow_methods(vec!["POST", "GET"]);
         .allow_methods(&[
             Method::GET,
             Method::POST,
@@ -53,12 +49,6 @@ async fn main() -> Result<()> {
             Method::PUT,
             Method::DELETE,
         ]);
-    // .allow_header("content-type");
-    // .allow_headers(["application/json", "content-type"]);
-    // .allow_credentials(true);
-    // .allow_methods(vec!["GET", "POST", "PUT", "DELETE"]);
-
-    // let tasks = warp::path("tasks");
 
     let task_routes = routes::tasks::create_task(db.clone())
         .or(routes::tasks::get_tasks(db.clone()))
@@ -67,8 +57,6 @@ async fn main() -> Result<()> {
         .or(routes::tasks::edit_task(db.clone()))
         .or(routes::tasks::dangerously_delete_all_tasks(db.clone()))
         .or(routes::tasks::delete_task(db.clone()));
-
-    // let projects = warp::path("projects");
 
     let projects_routes = routes::projects::create_project(db.clone())
         .or(routes::projects::fetch_all_projects_grouped_by_client(
@@ -81,13 +69,11 @@ async fn main() -> Result<()> {
         ))
         .or(routes::projects::delete_project(db.clone()));
 
-    // let clients = warp::path("clients");
     let client_routes = routes::clients::create_client(db.clone())
         .or(routes::clients::fetch_all_clients(db.clone()))
         .or(routes::clients::fetch_client(db.clone()))
         .or(routes::clients::delete_client(db.clone()));
 
-    let seed = warp::path("seed");
     let seed_routes = routes::seed::seed_clients(db.clone())
         .or(routes::seed::seed_projects(db.clone()))
         .or(routes::seed::seed_tasks(db.clone()))
@@ -102,7 +88,7 @@ async fn main() -> Result<()> {
         .and(warp::query::<experiments::PaginationQuery>())
         .and_then(experiments::pagination_with_query);
 
-    // TODO: add "api/v1" to all routes
+    // TODO: add "api/v1" to all routes path
     let routes = task_routes
         .or(projects_routes)
         .or(client_routes)
@@ -112,8 +98,9 @@ async fn main() -> Result<()> {
         .with(warp::trace::request())
         .recover(error::handle_rejection);
 
-    println!("Started on port 5000");
-    warp::serve(routes).run(([0, 0, 0, 0], 5000)).await;
+    const PORT: u16 = 5000;
+    println!("Started on port {PORT}");
+    warp::serve(routes).run(([0, 0, 0, 0], PORT)).await;
     Ok(())
 }
 
