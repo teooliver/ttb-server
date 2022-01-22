@@ -32,7 +32,10 @@ pub async fn fetch_all_tasks_handler(db: DB) -> WebResult<impl Reply> {
     Ok(json(&tasks))
 }
 
-pub async fn fetch_tasks_grouped_by_date(db: DB, query: PaginationQuery) -> WebResult<impl Reply> {
+pub async fn fetch_tasks_grouped_by_date_handler(
+    db: DB,
+    query: PaginationQuery,
+) -> WebResult<impl Reply> {
     const DEFAULT_PAGE: u32 = 1;
     const DEFAULT_LIMIT: u32 = 7;
     const START_PAGE: u8 = 1;

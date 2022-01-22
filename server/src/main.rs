@@ -4,13 +4,17 @@ mod controllers;
 mod db;
 mod error;
 mod models;
+mod routes;
 
 use std::convert::Infallible;
 use warp::{hyper::Method, Filter, Rejection};
 
+use tracing_subscriber::fmt::format::FmtSpan;
+
 type Result<T> = std::result::Result<T, error::Error>;
 type WebResult<T> = std::result::Result<T, Rejection>;
 
+// use crate::routes::with_db;
 use crate::{
     controllers::{clients, experiments, projects, seed, tasks},
     db::DB,
@@ -18,7 +22,18 @@ use crate::{
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    let log_filter = std::env::var("RUST_LOG")
+        .unwrap_or_else(|_| "time_tracker_base=info,warp=debug".to_owned());
+
     let db = DB::init().await?;
+
+    tracing_subscriber::fmt()
+        // Use the filter we built above to determine which traces to record.
+        .with_env_filter(log_filter)
+        // Record an event when each span closes. This can be used to time our
+        // routes' durations!
+        .with_span_events(FmtSpan::CLOSE)
+        .init();
 
     let cors = warp::cors()
         .allow_any_origin()
@@ -45,45 +60,15 @@ async fn main() -> Result<()> {
     // .allow_methods(vec!["GET", "POST", "PUT", "DELETE"]);
 
     // TODO: add "api/v1" to all routes
-    let tasks = warp::path("tasks");
+    // let tasks = warp::path("tasks");
 
-    let task_routes = tasks
-        .and(warp::post())
-        .and(warp::body::json())
-        .and(with_db(db.clone()))
-        .and_then(tasks::create_task_handler)
-        .or(tasks
-            .and(warp::get())
-            .and(warp::path::end())
-            .and(with_db(db.clone()))
-            .and_then(tasks::fetch_all_tasks_handler))
-        .or(tasks
-            .and(warp::get())
-            .and(warp::path::param())
-            .and(with_db(db.clone()))
-            .and_then(tasks::fetch_task_handler))
-        .or(tasks
-            .and(warp::get())
-            .and(warp::path("group"))
-            .and(with_db(db.clone()))
-            .and(warp::query::<tasks::PaginationQuery>())
-            .and_then(tasks::fetch_tasks_grouped_by_date))
-        .or(tasks
-            .and(warp::put())
-            .and(warp::path::param())
-            .and(warp::body::json())
-            .and(with_db(db.clone()))
-            .and_then(tasks::edit_task_handler))
-        .or(tasks
-            .and(warp::delete())
-            .and(warp::path("dangerously-delete-all-tasks"))
-            .and(with_db(db.clone()))
-            .and_then(tasks::delete_all_tasks_handler))
-        .or(tasks
-            .and(warp::delete())
-            .and(warp::path::param())
-            .and(with_db(db.clone()))
-            .and_then(tasks::delete_task_handler));
+    let task_routes = routes::tasks::create_task(db.clone())
+        .or(routes::tasks::get_tasks(db.clone()))
+        .or(routes::tasks::fetch_task(db.clone()))
+        .or(routes::tasks::fetch_tasks_grouped_by_date(db.clone()))
+        .or(routes::tasks::edit_task(db.clone()))
+        .or(routes::tasks::delete_all_tasks(db.clone()))
+        .or(routes::tasks::delete_task(db.clone()));
 
     let projects = warp::path("projects");
 
@@ -96,7 +81,15 @@ async fn main() -> Result<()> {
             .and(warp::get())
             .and(warp::path::end())
             .and(with_db(db.clone()))
-            .and_then(projects::fetch_all_projects_handler))
+            .and_then(projects::fetch_all_projects_handler)
+            .with(warp::trace(|info| {
+                tracing::info_span!(
+                    "fetch_all_projects_handler request",
+                    method = %info.method(),
+                    path = %info.path(),
+                    id = %uuid::Uuid::new_v4(),
+                )
+            })))
         .or(projects
             .and(warp::get())
             .and(warp::path("all"))
@@ -181,6 +174,7 @@ async fn main() -> Result<()> {
         .or(seed_routes)
         .or(experiments_routes)
         .with(cors)
+        .with(warp::trace::request())
         .recover(error::handle_rejection);
 
     println!("Started on port 5000");

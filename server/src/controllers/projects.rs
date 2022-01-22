@@ -1,13 +1,18 @@
 use crate::WebResult;
 use crate::{db::DB, models::project::ProjectRequest};
+use tracing::{event, instrument, Level};
 use warp::{http::StatusCode, reject, reply::json, Reply};
 
+#[instrument]
 pub async fn fetch_all_projects_handler(db: DB) -> WebResult<impl Reply> {
-    // returns a;; projects grouped by client
+    event!(target: "practical_rust_book", Level::ERROR, "querying questions");
+    // returns projects grouped by client
     let project = db
         .get_projects_grouped_by_client()
         .await
         .map_err(|e| reject::custom(e))?;
+
+    event!(Level::INFO, db = "OK");
     Ok(json(&project))
 }
 
