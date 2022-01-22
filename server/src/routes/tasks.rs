@@ -3,8 +3,6 @@ use crate::controllers::tasks;
 use crate::db::DB;
 use warp::Filter;
 
-// TODO: add "api/v1" to all routes
-
 /// POST /tasks
 pub fn create_task(
     db: DB,
@@ -64,7 +62,7 @@ pub fn edit_task(
 }
 
 /// DELETE /tasks/dangerously-delete-all-tasks
-pub fn delete_all_tasks(
+pub fn dangerously_delete_all_tasks(
     db: DB,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::path("tasks")

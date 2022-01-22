@@ -14,9 +14,8 @@ use tracing_subscriber::fmt::format::FmtSpan;
 type Result<T> = std::result::Result<T, error::Error>;
 type WebResult<T> = std::result::Result<T, Rejection>;
 
-// use crate::routes::with_db;
 use crate::{
-    controllers::{clients, experiments, projects, seed, tasks},
+    controllers::{clients, experiments, projects, seed},
     db::DB,
 };
 
@@ -59,7 +58,6 @@ async fn main() -> Result<()> {
     // .allow_credentials(true);
     // .allow_methods(vec!["GET", "POST", "PUT", "DELETE"]);
 
-    // TODO: add "api/v1" to all routes
     // let tasks = warp::path("tasks");
 
     let task_routes = routes::tasks::create_task(db.clone())
@@ -67,98 +65,34 @@ async fn main() -> Result<()> {
         .or(routes::tasks::fetch_task(db.clone()))
         .or(routes::tasks::fetch_tasks_grouped_by_date(db.clone()))
         .or(routes::tasks::edit_task(db.clone()))
-        .or(routes::tasks::delete_all_tasks(db.clone()))
+        .or(routes::tasks::dangerously_delete_all_tasks(db.clone()))
         .or(routes::tasks::delete_task(db.clone()));
 
-    let projects = warp::path("projects");
+    // let projects = warp::path("projects");
 
-    let projects_routes = projects
-        .and(warp::post())
-        .and(warp::body::json())
-        .and(with_db(db.clone()))
-        .and_then(projects::create_project_handler)
-        .or(projects
-            .and(warp::get())
-            .and(warp::path::end())
-            .and(with_db(db.clone()))
-            .and_then(projects::fetch_all_projects_handler)
-            .with(warp::trace(|info| {
-                tracing::info_span!(
-                    "fetch_all_projects_handler request",
-                    method = %info.method(),
-                    path = %info.path(),
-                    id = %uuid::Uuid::new_v4(),
-                )
-            })))
-        .or(projects
-            .and(warp::get())
-            .and(warp::path("all"))
-            .and(with_db(db.clone()))
-            .and_then(projects::fetch_projects_handler))
-        .or(projects
-            .and(warp::get())
-            .and(warp::path::param())
-            .and(with_db(db.clone()))
-            .and_then(projects::fetch_project_handler))
-        .or(projects
-            .and(warp::delete())
-            .and(warp::path("dangerously-delete-all-projects"))
-            .and(with_db(db.clone()))
-            .and_then(projects::delete_all_projects_handler))
-        .or(projects
-            .and(warp::delete())
-            .and(warp::path::param())
-            .and(with_db(db.clone()))
-            .and_then(projects::delete_project_handler));
+    let projects_routes = routes::projects::create_project(db.clone())
+        .or(routes::projects::fetch_all_projects_grouped_by_client(
+            db.clone(),
+        ))
+        .or(routes::projects::fetch_all_projects(db.clone()))
+        .or(routes::projects::fetch_project(db.clone()))
+        .or(routes::projects::dangerously_delete_all_projects(
+            db.clone(),
+        ))
+        .or(routes::projects::delete_project(db.clone()));
 
-    let clients = warp::path("clients");
-    let client_routes = clients
-        .and(warp::post())
-        .and(warp::body::json())
-        .and(with_db(db.clone()))
-        .and_then(clients::create_client_handler)
-        .or(clients
-            .and(warp::path::end())
-            .and(with_db(db.clone()))
-            .and_then(clients::fetch_all_clients_handler))
-        .or(clients
-            .and(warp::get())
-            .and(warp::path::param())
-            .and(with_db(db.clone()))
-            .and_then(clients::fetch_client_handler))
-        .or(clients
-            .and(warp::delete())
-            .and(warp::path::param())
-            .and(with_db(db.clone()))
-            .and_then(clients::delete_client_handler));
+    // let clients = warp::path("clients");
+    let client_routes = routes::clients::create_client(db.clone())
+        .or(routes::clients::fetch_all_clients(db.clone()))
+        .or(routes::clients::fetch_client(db.clone()))
+        .or(routes::clients::delete_client(db.clone()));
 
     let seed = warp::path("seed");
-
-    let seed_routes = seed
-        .and(warp::get())
-        .and(warp::path("clients"))
-        .and(with_db(db.clone()))
-        .and_then(seed::seed_clients)
-        .or(seed
-            .and(warp::get())
-            .and(warp::path("projects"))
-            .and(with_db(db.clone()))
-            .and_then(seed::seed_projects))
-        .or(seed
-            .and(warp::get())
-            .and(warp::path("tasks"))
-            .and(with_db(db.clone()))
-            .and_then(seed::seed_tasks))
-        .or(seed
-            .and(warp::get())
-            .and(warp::path("all"))
-            .and(with_db(db.clone()))
-            .and_then(seed::seed_all_data))
-        .or(seed
-            .and(warp::get())
-            .and(warp::path("remove"))
-            .and(with_db(db.clone()))
-            .and_then(seed::remove_all_data));
+    let seed_routes = routes::seed::seed_clients(db.clone())
+        .or(routes::seed::seed_projects(db.clone()))
+        .or(routes::seed::seed_tasks(db.clone()))
+        .or(routes::seed::seed_all(db.clone()))
+        .or(routes::seed::remove_all(db.clone()));
 
     let experiments = warp::path("experiments");
 
@@ -168,6 +102,7 @@ async fn main() -> Result<()> {
         .and(warp::query::<experiments::PaginationQuery>())
         .and_then(experiments::pagination_with_query);
 
+    // TODO: add "api/v1" to all routes
     let routes = task_routes
         .or(projects_routes)
         .or(client_routes)
