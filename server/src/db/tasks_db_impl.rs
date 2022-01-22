@@ -158,9 +158,6 @@ impl DB {
 
             let dates = doc_real.get_array("dates")?;
 
-            let mut id: &str;
-            let total_time: f64;
-
             for date in dates {
                 let tasks_doc = date.as_document().unwrap();
                 let id = tasks_doc.get_str("_id")?;
@@ -326,7 +323,7 @@ impl DB {
             return Err(ObjNotFound);
         }
 
-        // return id or task.
+        // return id or task?
         Ok(oid.to_hex())
     }
 
