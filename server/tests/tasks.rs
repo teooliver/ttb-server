@@ -16,29 +16,22 @@
 
 use reqwest::{self, Error};
 
-// #[tokio::test]
-// async fn test_get_tasks() -> Result<(), Error> {
-//     let res = reqwest::get("http://localhost:5000/tasks").await?;
-//     assert_eq!(res.status(), 200);
-//     Ok(())
-// }
+#[tokio::test]
+async fn test_get_tasks() -> Result<(), Error> {
+    let res = reqwest::get("http://localhost:5000/tasks").await?;
+    assert_eq!(res.status(), 200);
+    Ok(())
+}
 
 #[tokio::test]
 async fn delete_all_tasks() -> Result<(), Error> {
     let client = reqwest::Client::new();
-    // let res = client
-    //     .delete("http://localhost:5000/tasks/dangerously-delete-all-tasks")
-    //     .await?;
+
     let res = client
         .delete("http://localhost:5000/tasks/dangerously-delete-all-tasks")
         .send()
         .await?;
-    // let body = reqwest::get("http://localhost:5000/tasks")
-    //     .await?
-    //     .text()
-    //     .await?;
-    // .text()
-    // .await?;
+
     assert_eq!(res.status(), 200);
     Ok(())
 }
