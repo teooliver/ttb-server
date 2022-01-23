@@ -14,6 +14,4 @@ pub fn with_db(db: DB) -> impl Filter<Extract = (DB,), Error = Infallible> + Clo
 
 pub fn health_check() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::path("health_check").map(|| StatusCode::OK)
-    // .and(warp::get())
-    // .and_then(|| StatusCode::OK)
 }

@@ -50,6 +50,7 @@ async fn main() -> Result<()> {
             Method::DELETE,
         ]);
 
+    // Move these routes to their own files. I.e: routes/tasks
     let task_routes = routes::tasks::create_task(db.clone())
         .or(routes::tasks::get_tasks(db.clone()))
         .or(routes::tasks::fetch_task(db.clone()))
