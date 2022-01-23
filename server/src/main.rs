@@ -94,6 +94,7 @@ async fn main() -> Result<()> {
         .or(client_routes)
         .or(seed_routes)
         .or(experiments_routes)
+        .or(routes::health_check())
         .with(cors)
         .with(warp::trace::request())
         .recover(error::handle_rejection);
