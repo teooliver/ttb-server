@@ -37,7 +37,7 @@ pub async fn fetch_tasks_grouped_by_date_handler(
     query: PaginationQuery,
 ) -> WebResult<impl Reply> {
     const DEFAULT_PAGE: u32 = 1;
-    const DEFAULT_LIMIT: u32 = 7;
+    const DEFAULT_LIMIT: u32 = 2;
     const START_PAGE: u8 = 1;
 
     let page = query.page.unwrap_or(DEFAULT_PAGE);
