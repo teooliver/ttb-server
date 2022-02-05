@@ -6,6 +6,8 @@ A fullstack time tracker app inspired by toggl/clockify.
 
 ### Backend
 
+https://github.com/teooliver/ttb-server
+
 - Rust
 - Warp
 - Mongodb
@@ -15,6 +17,8 @@ A fullstack time tracker app inspired by toggl/clockify.
 > https://github.com/teooliver/time-tracker-base
 
 ### FrontEnd
+
+https://github.com/teooliver/ttb-client
 
 - Typescript
 - React
