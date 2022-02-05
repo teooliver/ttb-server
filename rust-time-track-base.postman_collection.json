@@ -1,0 +1,590 @@
+{
+	"info": {
+		"_postman_id": "f2564c37-c231-40ac-97ad-e4a2686af59c",
+		"name": "rust-time-track-base",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "tasks",
+			"item": [
+				{
+					"name": "Create Task",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n   \"name\": \"project null\",\n    \"initial_time\": \"2021-11-20T22:40:24.987Z\",\n    \"end_time\": \"2021-11-20T22:45:24.987Z\"\n}"
+						},
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/tasks/",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"tasks",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Task",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/tasks/6192f899dc8525be0c41deed",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"tasks",
+								"6192f899dc8525be0c41deed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Tasks",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/tasks/",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"tasks",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tasks Grouped By Date Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/tasks/group?page=1&size=1",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"tasks",
+								"group"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Task",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Hello There\",\n  \"initial_time\": \"2021-12-02T21:45:09Z\",\n  \"end_time\": \"2021-12-02T21:45:09Z\"\n}"
+						},
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/tasks/61a7f8af5f729efb54f02479",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"tasks",
+								"61a7f8af5f729efb54f02479"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Task",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{       \"name\": \"hello\",\n        \"time_in_seconds\": 0,\n        \"initial_time\": \"2021-10-19T20:25:17.734Z\",\n        \"end_time\": \"2021-10-19T20:25:34.284Z\"\n}"
+						},
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/tasks/61787c1a6c6757ef90211362",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"tasks",
+								"61787c1a6c6757ef90211362"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete All Tasks",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/tasks/dangerously-delete-all-tasks",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"tasks",
+								"dangerously-delete-all-tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "projects",
+			"item": [
+				{
+					"name": "Get Project",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/projects/61b3a705ada6e37c4c8031f2",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"projects",
+								"61b3a705ada6e37c4c8031f2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Projects Grouped By Date",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/projects/",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"projects",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Projects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/projects/all/",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"projects",
+								"all",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Project",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n  \"name\": \"NULL\",\n  \"color\": \"white\"\n}\n\n\n"
+						},
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/projects/",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"projects",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Project",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{       \"name\": \"hello\",\n        \"time_in_seconds\": 0,\n        \"initial_time\": \"2021-10-19T20:25:17.734Z\",\n        \"end_time\": \"2021-10-19T20:25:34.284Z\"\n}"
+						},
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/projects/61b3ba09c213457d29045019",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"projects",
+								"61b3ba09c213457d29045019"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete All Projects",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/tasks/dangerously-delete-all-tasks",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"tasks",
+								"dangerously-delete-all-tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "clients",
+			"item": [
+				{
+					"name": "Get Clients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/clients/61b2589352511ed3b0bb5232",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"clients",
+								"61b2589352511ed3b0bb5232"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Clients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/clients/",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"clients",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Another Client\"\n}"
+						},
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/clients/",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"clients",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Client",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/clients/61b2589352511ed3b0bb5232",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"clients",
+								"61b2589352511ed3b0bb5232"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "seed",
+			"item": [
+				{
+					"name": "Seed All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/seed/all",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"seed",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Seed Clients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/seed/clients",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"seed",
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Seed Project",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/seed/projects",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"seed",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Seed Tasks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/seed/tasks",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"seed",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove All Data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/seed/remove",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"seed",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "experiments",
+			"item": [
+				{
+					"name": "GET",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/experiments?page=11&size=1",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"experiments"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "11"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{rust_time_track_base_server_url}}/experiments?page=11&size=1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/experiments?page=11&size=1",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"experiments"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "11"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{rust_time_track_base_server_url}}/experiments?page=10&size=1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/experiments?page=10&size=1",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"experiments"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "10"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

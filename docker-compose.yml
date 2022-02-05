@@ -1,0 +1,30 @@
+services:
+  mongodb:
+    image: mongo:4.4
+    # environment:
+    #   MONGO_INIDB_ROOT_USERNAME: mongoadmin
+    #   MONGO_INIDB_ROOT_PASWWORD: secret
+    volumes:
+      - mongodb:/data/db
+    ports:
+      - 27017:27017
+    # profiles: ["backend"]
+
+  # rust_server?
+  # node_server:
+  #   # restart: unless-stopped
+  #   build:
+  #     dockerfile: ./Dockerfile.dev
+  #     context: ./server
+  #   volumes:
+  #     # - /app/node_modules
+  #     - ./server:/server/
+  #   ports:
+  #     - 5000:5000
+  #   depends_on:
+  #     - mongodb
+  #   profiles: ["backend"]
+
+ 
+volumes:
+  mongodb:
