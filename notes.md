@@ -55,6 +55,8 @@ println!("DURATION {:?}", duration);
 
 - Limit fake events data to maximum of `8 hours a day`. (Good challenge)
 
+- Make use of Default Trait. I.e: impl Default for PaginationQuery/Pagination
+
 # IMPORTANT INTEGRATION TESTS
 
 - Add Task
