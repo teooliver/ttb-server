@@ -111,6 +111,11 @@ This are some of the pipelines used in this project, you can copy and paste them
     },
   },
   {
+    $sort: {
+      _id: -1,
+    },
+  },
+  {
     $facet: {
       details: [
         {
@@ -118,11 +123,11 @@ This are some of the pipelines used in this project, you can copy and paste them
         },
       ],
       dates: [
-        {
-          $sort: {
-            _id: -1,
-          },
-        },
+        // {
+        //   $sort: {
+        //     _id: -1,
+        //   },
+        // },
         {
           $skip: 3,
         },

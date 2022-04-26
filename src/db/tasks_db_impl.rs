@@ -125,20 +125,33 @@ impl DB {
             },
         };
 
+        let sort_by_date = doc! {
+            "$sort": {
+                "_id": -1,
+            },
+        };
+
         let facet = doc! {
             "$facet": {
                 "details": [
                     { "$count": "count" },
                 ],
                 "dates": [
-                    { "$sort": { "_id": -1 } },
+                    // Pagination
                     { "$skip": skip },
                     { "$limit": limit },
                 ],
             }
         };
 
-        let pipeline = vec![lookup_projects, lookup_clients, project, group, facet];
+        let pipeline = vec![
+            lookup_projects,
+            lookup_clients,
+            project,
+            group,
+            sort_by_date,
+            facet,
+        ];
 
         let mut cursor = self
             .get_tasks_collection()
@@ -150,13 +163,12 @@ impl DB {
         let mut total_items: i32 = 0;
 
         while let Some(doc) = cursor.next().await {
-            let doc_real = doc.unwrap();
-            let details = doc_real.get_array("details")?;
-
+            let doc = doc.unwrap();
+            let details = doc.get_array("details")?;
             let count = details[0].as_document().unwrap().get_i32("count")?;
             total_items = count;
 
-            let dates = doc_real.get_array("dates")?;
+            let dates = doc.get_array("dates")?;
 
             for date in dates {
                 let tasks_doc = date.as_document().unwrap();
@@ -208,8 +220,7 @@ impl DB {
                     tasks: tasks_vec.to_owned(),
                     total_time,
                 };
-
-                grouped_tasks_vec.push(grouped_tasks);
+                grouped_tasks_vec.push(grouped_tasks.clone());
             }
         }
 

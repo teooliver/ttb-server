@@ -9,11 +9,13 @@ pub struct ClientSchema {
     pub updated_at: DateTime,
 }
 
+// TODO: Rename to NewClient
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ClientRequest {
     pub name: String,
 }
 
+// TODO: ClientResponse it almost the same as ClientSchema, take a better look and try to remove it.
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ClientResponse {
     pub _id: String, //ObjectId

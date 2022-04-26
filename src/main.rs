@@ -18,18 +18,18 @@ use crate::{controllers::experiments, db::DB};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let log_filter = std::env::var("RUST_LOG")
-        .unwrap_or_else(|_| "time_tracker_base=info,warp=debug".to_owned());
+    // let log_filter = std::env::var("RUST_LOG")
+    //     .unwrap_or_else(|_| "time_tracker_base=info,warp=debug".to_owned());
 
     let db = DB::init().await?;
 
-    tracing_subscriber::fmt()
-        // Determine which traces to record.
-        .with_env_filter(log_filter)
-        // Record an event when each span closes. This can be used to time our
-        // routes' durations!
-        .with_span_events(FmtSpan::CLOSE)
-        .init();
+    // tracing_subscriber::fmt()
+    //     // Determine which traces to record.
+    //     .with_env_filter(log_filter)
+    //     // Record an event when each span closes. This can be used to time our
+    //     // routes' durations!
+    //     .with_span_events(FmtSpan::CLOSE)
+    //     .init();
 
     let cors = warp::cors()
         .allow_any_origin()
@@ -50,7 +50,7 @@ async fn main() -> Result<()> {
             Method::DELETE,
         ]);
 
-    // Move these routes to their own files. I.e: routes/tasks
+    // Move these routes to their own files. I.e: routes/tasks ?
     let task_routes = routes::tasks::create_task(db.clone())
         .or(routes::tasks::get_tasks(db.clone()))
         .or(routes::tasks::fetch_task(db.clone()))

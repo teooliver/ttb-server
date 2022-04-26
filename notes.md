@@ -54,7 +54,7 @@ println!("DURATION {:?}", duration);
 - Add tracing to all routes
 
 - Limit fake events data to maximum of `8 hours a day`. (Good challenge)
-
+- Rename the `models` folder to `types`
 - Make use of Default Trait. I.e: impl Default for PaginationQuery/Pagination
 
 # IMPORTANT INTEGRATION TESTS
