@@ -1,8 +1,8 @@
+use crate::db::DB;
 use crate::models::task::TaskGroupDates;
 use crate::WebResult;
-use crate::{db::DB, models::task::TaskRequest};
 use serde::{self, Deserialize, Serialize};
-use warp::{http::StatusCode, reject, reply::json, Reply};
+use warp::{reject, reply::json, Reply};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PaginationQuery {
