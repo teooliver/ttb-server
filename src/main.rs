@@ -5,6 +5,7 @@ mod db;
 mod error;
 mod models;
 mod routes;
+mod config;
 
 use std::convert::Infallible;
 use warp::{hyper::Method, Filter, Rejection};
@@ -16,20 +17,26 @@ type WebResult<T> = std::result::Result<T, Rejection>;
 
 use crate::{controllers::experiments, db::DB};
 
+// use config::Config;
+
 #[tokio::main]
 async fn main() -> Result<()> {
-    // let log_filter = std::env::var("RUST_LOG")
-    //     .unwrap_or_else(|_| "time_tracker_base=info,warp=debug".to_owned());
+    let config = config::Config::new().expect("Config can't be set");
+
+    let log_filter = format!(
+            "handle_errors={},rust_web_dev={},warp={}",
+            config.log_level, config.log_level, config.log_level
+        );
 
     let db = DB::init().await?;
 
-    // tracing_subscriber::fmt()
-    //     // Determine which traces to record.
-    //     .with_env_filter(log_filter)
-    //     // Record an event when each span closes. This can be used to time our
-    //     // routes' durations!
-    //     .with_span_events(FmtSpan::CLOSE)
-    //     .init();
+    tracing_subscriber::fmt()
+        // Use the filter we built above to determine which traces to record.
+        .with_env_filter(log_filter)
+        // Record an event when each span closes. This can be used to time our
+        // routes' durations!
+        .with_span_events(FmtSpan::CLOSE)
+        .init();
 
     let cors = warp::cors()
         .allow_any_origin()
@@ -100,9 +107,10 @@ async fn main() -> Result<()> {
         .with(warp::trace::request())
         .recover(error::handle_rejection);
 
-    const PORT: u16 = 5000;
-    println!("Started on port {PORT}");
-    warp::serve(routes).run(([0, 0, 0, 0], PORT)).await;
+    // tracing::info!("Q&A service build ID {}", env!("RUST_WEB_DEV_VERSION"));
+
+    println!("Started on port {}", config.port);
+    warp::serve(routes).run(([0, 0, 0, 0], config.port)).await;
     Ok(())
 }
 

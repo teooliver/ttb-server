@@ -73,3 +73,5 @@ println!("DURATION {:?}", duration);
 ### Script
 
 - Add script to the frontend and backend repos that creates a docker-compose/Dockerfile configuration in the parent folder so to start the project with just one command.
+
+- cargo run -- --database-host localhost --log-level warn --database-name rust-time-tracker-base -- database-port 5000

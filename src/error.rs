@@ -20,6 +20,8 @@ pub enum Error {
     PageError,
     #[error("Limit should be at least 1")]
     LimitError,
+    #[error("Error parsing int")]
+    ParseError(std::num::ParseIntError),
 }
 
 #[derive(Serialize)]
