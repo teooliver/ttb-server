@@ -1,3 +1,4 @@
+mod config;
 #[allow(dead_code)]
 // #![warn(clippy::all)]
 mod controllers;
@@ -5,7 +6,7 @@ mod db;
 mod error;
 mod models;
 mod routes;
-mod config;
+mod utils;
 
 use std::convert::Infallible;
 use warp::{hyper::Method, Filter, Rejection};
@@ -24,9 +25,9 @@ async fn main() -> Result<()> {
     let config = config::Config::new().expect("Config can't be set");
 
     let log_filter = format!(
-            "handle_errors={},rust_web_dev={},warp={}",
-            config.log_level, config.log_level, config.log_level
-        );
+        "handle_errors={},rust_web_dev={},warp={}",
+        config.log_level, config.log_level, config.log_level
+    );
 
     let db = DB::init().await?;
 

@@ -32,7 +32,6 @@ println!("DURATION {:?}", duration);
 #### Backend
 
 - Refactor project into a library and a binary so its easier to run non blackbox tests.
-
 - Move routes in main to their own files
 - Create better types for json errors.
 - Extract Error handling functions to its own `lib`
@@ -70,8 +69,17 @@ println!("DURATION {:?}", duration);
 
 # KNOWN BUGS:
 
+---
+
 ### Script
 
 - Add script to the frontend and backend repos that creates a docker-compose/Dockerfile configuration in the parent folder so to start the project with just one command.
 
+### Run Project CLI example:
+
 - cargo run -- --database-host localhost --log-level warn --database-name rust-time-tracker-base -- database-port 5000
+
+### Study
+
+- Better understading of how `tracing` and `tracing-subscriber` works;
+- How would I implement Datadog here for example?

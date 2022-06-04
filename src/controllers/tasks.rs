@@ -7,6 +7,7 @@ use warp::{http::StatusCode, reject, reply::json, Reply};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PaginationQuery {
     page: Option<u32>,
+    // TODO: change name to limit
     size: Option<u32>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -40,7 +41,7 @@ pub async fn fetch_tasks_grouped_by_date_handler(
     // I.e.: impl Default for PaginationQuery/Pagination?
     const DEFAULT_PAGE: u32 = 1;
     const DEFAULT_LIMIT: u32 = 2;
-    const START_PAGE: u8 = 1;
+    const START_PAGE: u32 = 1;
 
     let page = query.page.unwrap_or(DEFAULT_PAGE);
     let size = query.size.unwrap_or(DEFAULT_LIMIT);
@@ -89,7 +90,7 @@ pub async fn fetch_tasks_grouped_by_date_handler(
         total_pages,
         total_items: tasks.total,
         size,
-        start: START_PAGE as u32,
+        start: START_PAGE,
     };
 
     let result = PaginatinationResponse {
