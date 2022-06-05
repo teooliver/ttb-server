@@ -1,26 +1,32 @@
 use crate::models::task::TaskGroupDates;
+use crate::utils::pagination::{
+    has_next_page, has_previous_page, sanitize_pagination_query, Pagination, PaginationQuery,
+};
 use crate::WebResult;
 use crate::{db::DB, models::task::TaskRequest};
 use serde::{self, Deserialize, Serialize};
 use warp::{http::StatusCode, reject, reply::json, Reply};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PaginationQuery {
-    page: Option<u32>,
-    // TODO: change name to limit
-    size: Option<u32>,
-}
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Pagination {
-    previous: Option<String>, //Option
-    next: Option<String>,     //Option
-    next_page: Option<u32>,
-    previous_page: Option<u32>,
-    total_pages: u32,
-    total_items: i32,
-    size: u32,
-    start: u32,
-}
+// TODO: remove before MR
+// #[derive(Debug, Serialize, Deserialize)]
+// pub struct PaginationQuery {
+//     page: Option<u32>,
+//     // TODO: change name to limit
+//     size: Option<u32>,
+// }
+
+// TODO: remove before MR
+// #[derive(Debug, Serialize, Deserialize)]
+// pub struct Pagination {
+//     previous: Option<String>, //Option
+//     next: Option<String>,     //Option
+//     next_page: Option<u32>,
+//     previous_page: Option<u32>,
+//     total_pages: u32,
+//     total_items: i32,
+//     size: u32,
+//     start: u32,
+// }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PaginatinationResponse {
@@ -37,38 +43,28 @@ pub async fn fetch_tasks_grouped_by_date_handler(
     db: DB,
     query: PaginationQuery,
 ) -> WebResult<impl Reply> {
-    // TODO: Impl the Default Trait instead
-    // I.e.: impl Default for PaginationQuery/Pagination?
-    const DEFAULT_PAGE: u32 = 1;
-    const DEFAULT_LIMIT: u32 = 2;
-    const START_PAGE: u32 = 1;
+    // TODO: remove before MR
+    // const DEFAULT_PAGE: u32 = 1;
+    // const DEFAULT_LIMIT: u32 = 2;
+    // const START_PAGE: u32 = 1;
 
-    let page = query.page.unwrap_or(DEFAULT_PAGE);
-    let size = query.size.unwrap_or(DEFAULT_LIMIT);
+    // let page = query.page.unwrap_or(DEFAULT_PAGE);
+    // let size = query.size.unwrap_or(DEFAULT_LIMIT);
+
+    let sanitized_query = sanitize_pagination_query(query);
+    let page = sanitized_query.page.unwrap();
+    let size = sanitized_query.size.unwrap();
 
     let tasks = db
-        .get_tasks_grouped_by_date(Some(page), Some(size))
+        .get_tasks_grouped_by_date(sanitized_query.page, sanitized_query.size)
         .await
         .map_err(|e| reject::custom(e))?;
 
     // This doesnt look very elegant, Im sure there's a better way of doing this division.
     let total_pages = (tasks.total as f32 / size as f32).ceil() as u32;
 
-    fn check_has_next_page(total: u32, current_page: u32) -> bool {
-        if total == current_page {
-            return false;
-        }
-        true
-    }
-    fn check_has_previous_page(current_page: u32) -> bool {
-        if current_page == 1 {
-            return false;
-        }
-        true
-    }
-
-    let has_next_page = check_has_next_page(total_pages, page);
-    let has_previous_page = check_has_previous_page(page);
+    let has_next_page = has_next_page(total_pages, page);
+    let has_previous_page = has_previous_page(page);
 
     let pagination = Pagination {
         previous: if has_previous_page {
@@ -90,7 +86,7 @@ pub async fn fetch_tasks_grouped_by_date_handler(
         total_pages,
         total_items: tasks.total,
         size,
-        start: START_PAGE,
+        // start: START_PAGE,
     };
 
     let result = PaginatinationResponse {

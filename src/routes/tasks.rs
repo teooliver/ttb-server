@@ -1,6 +1,7 @@
 use super::with_db;
 use crate::controllers::tasks;
 use crate::db::DB;
+use crate::utils::pagination;
 use warp::Filter;
 
 /// POST /tasks
@@ -45,7 +46,7 @@ pub fn fetch_tasks_grouped_by_date(
         .and(warp::get())
         .and(warp::path("group"))
         .and(with_db(db.clone()))
-        .and(warp::query::<tasks::PaginationQuery>())
+        .and(warp::query::<pagination::PaginationQuery>())
         .and_then(tasks::fetch_tasks_grouped_by_date_handler)
 }
 

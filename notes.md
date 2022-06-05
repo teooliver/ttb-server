@@ -77,7 +77,7 @@ println!("DURATION {:?}", duration);
 
 ### Run Project CLI example:
 
-- cargo run -- --database-host localhost --log-level warn --database-name rust-time-tracker-base -- database-port 5000
+- cargo run -- --db-host localhost --log-level warn --db-name rust-time-tracker-base --db-port 5000 --db-password 12345
 
 ### Study
 

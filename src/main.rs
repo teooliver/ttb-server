@@ -1,6 +1,5 @@
 mod config;
 #[allow(dead_code)]
-// #![warn(clippy::all)]
 mod controllers;
 mod db;
 mod error;
@@ -17,8 +16,6 @@ type Result<T> = std::result::Result<T, error::Error>;
 type WebResult<T> = std::result::Result<T, Rejection>;
 
 use crate::{controllers::experiments, db::DB};
-
-// use config::Config;
 
 #[tokio::main]
 async fn main() -> Result<()> {
