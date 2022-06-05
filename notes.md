@@ -83,3 +83,7 @@ println!("DURATION {:?}", duration);
 
 - Better understading of how `tracing` and `tracing-subscriber` works;
 - How would I implement Datadog here for example?
+
+### Questions:
+
+In the filters chaing, when expecting a `query` from the url, is it better to just use `warp::query()` and later build a struct or whatever from it, or use it as a generecit recieving the apropriate type from the beginning, example: warp::query::<tasks::PaginationQuery>()
