@@ -8,11 +8,11 @@ use mongodb::bson::oid::ObjectId;
 use mongodb::bson::{self, doc, Bson};
 use mongodb::Collection;
 
-use super::{DB, DB_NAME};
+use super::DB;
 
 impl DB {
     fn get_clients_collection(&self) -> Collection<Document> {
-        self.client.database(DB_NAME).collection("clients")
+        self.client.database(&self.db_name).collection("clients")
     }
 
     pub fn doc_to_client(&self, doc: &Document) -> Result<ClientResponse, error::Error> {

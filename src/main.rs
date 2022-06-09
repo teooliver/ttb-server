@@ -26,7 +26,14 @@ async fn main() -> Result<()> {
         config.log_level, config.log_level, config.log_level
     );
 
-    let db = DB::init().await?;
+    let db = DB::init(
+        &format!(
+            "mongodb://{}:{}/{}",
+            config.db_host, config.db_port, config.db_name
+        ),
+        config.db_name,
+    )
+    .await?;
 
     tracing_subscriber::fmt()
         // Use the filter we built above to determine which traces to record.

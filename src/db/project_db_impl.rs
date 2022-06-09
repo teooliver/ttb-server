@@ -7,11 +7,11 @@ use mongodb::bson::oid::ObjectId;
 use mongodb::bson::{doc, Bson, Document};
 use mongodb::Collection;
 
-use super::{DB, DB_NAME};
+use super::DB;
 
 impl DB {
     pub fn get_projects_collection(&self) -> Collection<Document> {
-        self.client.database(DB_NAME).collection("projects")
+        self.client.database(&self.db_name).collection("projects")
     }
 
     pub fn doc_to_project(&self, doc: &Document) -> Result<ProjectResponse> {

@@ -8,11 +8,11 @@ use mongodb::bson::{self, Bson};
 use mongodb::bson::{doc, document::Document, oid::ObjectId};
 use mongodb::Collection;
 
-use super::{DB, DB_NAME};
+use super::DB;
 
 impl DB {
     pub fn get_tasks_collection(&self) -> Collection<Document> {
-        self.client.database(DB_NAME).collection("tasks")
+        self.client.database(&self.db_name).collection("tasks")
     }
 
     fn doc_to_task(&self, doc: &Document) -> Result<TaskResponse> {
