@@ -20,7 +20,7 @@ pub struct Config {
     /// Database user
     #[clap(long)]
     pub db_password: String,
-    /// URL for the postgres database
+    /// URL for the mongodb database
     #[clap(long, default_value = "127.0.0.1")]
     pub db_host: String,
     /// PORT number for the database connection
