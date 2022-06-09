@@ -18,7 +18,7 @@ pub struct Config {
     #[clap(long, default_value = "mongoadmin")]
     pub db_user: String,
     /// Database user
-    #[clap(long)]
+    #[clap(long, default_value = "password")]
     pub db_password: String,
     /// URL for the mongodb database
     #[clap(long, default_value = "127.0.0.1")]
@@ -33,7 +33,6 @@ pub struct Config {
 
 impl Config {
     pub fn new() -> Result<Config, Error> {
-        dotenv::dotenv().ok();
         let config = Config::parse();
 
         let port = std::env::var("PORT")
@@ -57,5 +56,16 @@ impl Config {
             db_port: db_port.parse::<u16>().map_err(|e| Error::ParseError(e))?,
             db_name,
         })
+    }
+}
+
+#[cfg(test)]
+mod config_tests {
+    use super::*;
+
+    #[test]
+    fn unset_api_key() {
+        let result = std::panic::catch_unwind(|| Config::new());
+        assert!(result.is_err());
     }
 }

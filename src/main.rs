@@ -19,6 +19,8 @@ use crate::{controllers::experiments, db::DB};
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    dotenv::dotenv().ok();
+
     let config = config::Config::new().expect("Config can't be set");
 
     let log_filter = format!(
