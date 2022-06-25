@@ -39,6 +39,7 @@ pub async fn fetch_all_tasks_handler(db: DB) -> WebResult<impl Reply> {
     Ok(json(&tasks))
 }
 
+// TODO: FIX bug where not return proper Schema if there's no tasks found
 pub async fn fetch_tasks_grouped_by_date_handler(
     db: DB,
     query: PaginationQuery,
@@ -89,11 +90,14 @@ pub async fn fetch_tasks_grouped_by_date_handler(
         // start: START_PAGE,
     };
 
+    println!("TASKS RESULT {:?}", &tasks.result);
+
     let result = PaginatinationResponse {
         results: tasks.result,
         pagination,
     };
 
+    println!("ALL RESULTS {:?}", &result);
     Ok(json(&result))
 }
 

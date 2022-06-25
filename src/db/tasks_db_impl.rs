@@ -165,7 +165,13 @@ impl DB {
         while let Some(doc) = cursor.next().await {
             let doc = doc.unwrap();
             let details = doc.get_array("details")?;
-            let count = details[0].as_document().unwrap().get_i32("count")?;
+            let count: i32;
+
+            if details.len() > 0 {
+                count = details[0].as_document().unwrap().get_i32("count")?;
+            } else {
+                count = 0 as i32;
+            };
             total_items = count;
 
             let dates = doc.get_array("dates")?;
