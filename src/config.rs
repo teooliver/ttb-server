@@ -5,7 +5,7 @@ use std::env;
 use crate::error::Error;
 
 /// Q&A web service API
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, PartialEq)]
 #[clap(author, version, about, long_about = None)]
 pub struct Config {
     /// Which errors we want to log (info, warn or error)
@@ -35,7 +35,7 @@ impl Config {
     pub fn new() -> Result<Config, Error> {
         let config = Config::parse();
 
-        let port = std::env::var("PORT")
+        let port = env::var("PORT")
             .ok()
             .map(|val| val.parse::<u16>())
             .unwrap_or(Ok(config.port))
@@ -63,9 +63,33 @@ impl Config {
 mod config_tests {
     use super::*;
 
+    fn set_env() {
+        env::set_var("PORT", "5000");
+        env::set_var("MONGODB_PASSWORD", "secret");
+        env::set_var("MONGODB_PORT", "27017");
+        env::set_var("MONGODB_DB", "test_db");
+    }
+
     #[test]
-    fn unset_api_key() {
+    fn unset_and_set_api_key() {
+        // ENV VARIABLES ARE NOT SET
         let result = std::panic::catch_unwind(|| Config::new());
         assert!(result.is_err());
+
+        // NOW WE SET THEM
+        set_env();
+        let expected = Config {
+            log_level: "warn".to_string(),
+            port: 5000,
+            db_user: "mongoadmin".to_string(),
+            db_password: "secret".to_string(),
+            db_host: "127.0.0.1".to_string(),
+            db_port: 27017,
+            db_name: "test_db".to_string(),
+        };
+        let config = Config::new().unwrap();
+        assert_eq!(config, expected);
+
+        env::remove_var("")
     }
 }
