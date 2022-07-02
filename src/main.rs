@@ -95,6 +95,8 @@ async fn main() -> Result<()> {
         .or(routes::seed::seed_all(db.clone()))
         .or(routes::seed::remove_all(db.clone()));
 
+    let account_routes = routes::authentication::create_account(db.clone());
+
     let experiments = warp::path("experiments");
 
     let experiments_routes = experiments
@@ -109,6 +111,7 @@ async fn main() -> Result<()> {
         .or(client_routes)
         .or(seed_routes)
         .or(experiments_routes)
+        .or(account_routes)
         .or(routes::health_check())
         .with(cors)
         .with(warp::trace::request())

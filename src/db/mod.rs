@@ -6,8 +6,6 @@ pub mod tasks_db_impl;
 use crate::Result;
 use mongodb::{options::ClientOptions, Client};
 
-// pub const DB_NAME: &str = "rust-time-tracker-base-v2";
-
 #[derive(Clone, Debug)]
 pub struct DB {
     pub client: Client,

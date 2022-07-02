@@ -1,5 +1,6 @@
+use crate::error;
+use crate::error::Error::*;
 use crate::models::account::Account;
-use crate::{error::Error::*, Result};
 use chrono::prelude::*;
 use futures::StreamExt;
 use mongodb::bson::{self, Bson};
@@ -61,7 +62,7 @@ impl DB {
             .get_accounts_collection()
             .insert_one(
                 doc! {
-                "email": _entry.name.clone(),
+                "email": _entry.email.clone(),
                 "password": _entry.password.clone(),
                 "created_at": chrono::Utc::now().clone(),
                 "updated_at": chrono::Utc::now().clone(),

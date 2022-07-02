@@ -1,4 +1,4 @@
-mod authentication;
+pub mod authentication;
 pub mod clients;
 pub mod projects;
 pub mod seed;

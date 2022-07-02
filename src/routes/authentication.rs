@@ -1,10 +1,14 @@
+use super::with_db;
+use crate::controllers::authentication;
 use crate::db::DB;
-use crate::models::account::Account;
-use warp::http::StatusCode;
+use warp::Filter;
 
-pub async fn register(db: DB, account: Account) -> Result<impl warp::Reply, warp::Rejection> {
-    match db.add_account(account).await {
-        Ok(_) => Ok(warp::reply::with_status("Account added", StatusCode::OK)),
-        Err(e) => Err(warp::reject::custom(e)),
-    }
+pub fn create_account(
+    db: DB,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path("accounts")
+        .and(warp::post())
+        .and(warp::body::json())
+        .and(with_db(db.clone()))
+        .and_then(authentication::register)
 }
