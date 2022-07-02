@@ -1,11 +1,12 @@
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Account {
     pub _id: Option<ObjectId>,
-    pub first_name: String,
-    pub last_name: String,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
     pub email: String,
-    pub account_created_at: DateTime,
-    pub account_updated_at: DateTime,
+    pub password: String,
+    pub created_at: Option<DateTime>,
+    pub updated_at: Option<DateTime>,
 }
 
 // #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq, Hash)]

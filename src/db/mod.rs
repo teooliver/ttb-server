@@ -1,3 +1,4 @@
+mod accounts_db_impl;
 pub mod clients_db_impl;
 pub mod project_db_impl;
 pub mod tasks_db_impl;
