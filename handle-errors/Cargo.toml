@@ -6,3 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+warp = "0.3.1"
+mongodb = {version = "2.0.1", features = ["bson-chrono-0_4"]}
+serde = {version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+rust-argon2 = "1.0"
+paseto = "2.0"

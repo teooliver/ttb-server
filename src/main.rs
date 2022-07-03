@@ -2,17 +2,20 @@ mod config;
 #[allow(dead_code)]
 mod controllers;
 mod db;
-mod error;
+// mod error;
 mod models;
 mod routes;
 mod utils;
 
+use handle_errors;
+
+use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 use std::convert::Infallible;
 use warp::{hyper::Method, Filter, Rejection};
 
 use tracing_subscriber::fmt::format::FmtSpan;
 
-type Result<T> = std::result::Result<T, error::Error>;
+type Result<T> = std::result::Result<T, handle_errors::Error>;
 type WebResult<T> = std::result::Result<T, Rejection>;
 
 use crate::{controllers::experiments, db::DB};
@@ -36,6 +39,17 @@ async fn main() -> Result<()> {
         config.db_name,
     )
     .await?;
+
+    let options = IndexOptions::builder().unique(true).build();
+    let model = IndexModel::builder()
+        .keys(doc! {"email": 1})
+        .options(options)
+        .build();
+
+    db.get_accounts_collection()
+        .create_index(model, None)
+        .await
+        .expect("error creating index!");
 
     tracing_subscriber::fmt()
         // Use the filter we built above to determine which traces to record.
@@ -95,7 +109,8 @@ async fn main() -> Result<()> {
         .or(routes::seed::seed_all(db.clone()))
         .or(routes::seed::remove_all(db.clone()));
 
-    let account_routes = routes::authentication::create_account(db.clone());
+    let account_routes = routes::authentication::create_account(db.clone())
+        .or(routes::authentication::fetch_account(db.clone()));
 
     let experiments = warp::path("experiments");
 
@@ -115,7 +130,7 @@ async fn main() -> Result<()> {
         .or(routes::health_check())
         .with(cors)
         .with(warp::trace::request())
-        .recover(error::handle_rejection);
+        .recover(handle_errors::handle_rejection);
 
     // tracing::info!("Q&A service build ID {}", env!("RUST_WEB_DEV_VERSION"));
 

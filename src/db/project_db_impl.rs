@@ -1,7 +1,7 @@
 use crate::models::project::{
     ProjectAfterAggregation, ProjectRequest, ProjectResponse, ProjectsGroupedByClient,
 };
-use crate::{error::Error::*, Result};
+use crate::{handle_errors::Error::*, Result};
 use futures::StreamExt;
 use mongodb::bson::oid::ObjectId;
 use mongodb::bson::{doc, Bson, Document};

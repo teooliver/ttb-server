@@ -1,5 +1,5 @@
 use crate::db::DB;
-use crate::error::Error::InvalidIDError;
+use crate::handle_errors::Error::InvalidIDError;
 use crate::{models::project::ProjectRequest, WebResult};
 use chrono::{prelude::*, Duration};
 use fake::{self, Fake};

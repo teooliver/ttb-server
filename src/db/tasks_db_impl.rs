@@ -1,7 +1,7 @@
 use crate::models::task::{
     TaskAfterGrouped, TaskGroupDates, TaskRequest, TaskResponse, TasksGroupedByDate,
 };
-use crate::{error::Error::*, Result};
+use crate::{handle_errors::Error::*, Result};
 use chrono::prelude::*;
 use futures::StreamExt;
 use mongodb::bson::{self, Bson};

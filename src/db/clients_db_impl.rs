@@ -1,5 +1,5 @@
-use crate::error;
-use crate::error::Error::*;
+use crate::handle_errors;
+use crate::handle_errors::Error::*;
 use crate::models::client::{ClientRequest, ClientResponse};
 
 use bson::Document;
@@ -15,7 +15,7 @@ impl DB {
         self.client.database(&self.db_name).collection("clients")
     }
 
-    pub fn doc_to_client(&self, doc: &Document) -> Result<ClientResponse, error::Error> {
+    pub fn doc_to_client(&self, doc: &Document) -> Result<ClientResponse, handle_errors::Error> {
         let id = doc.get_object_id("_id")?;
         let name = doc.get_str("name")?;
         let created_at = doc.get_datetime("created_at")?;
@@ -31,7 +31,7 @@ impl DB {
         Ok(client)
     }
 
-    pub async fn get_all_clients(&self) -> Result<Vec<ClientResponse>, error::Error> {
+    pub async fn get_all_clients(&self) -> Result<Vec<ClientResponse>, handle_errors::Error> {
         let mut cursor = self
             .get_clients_collection()
             .find(None, None)
@@ -47,7 +47,7 @@ impl DB {
         Ok(result)
     }
 
-    pub async fn find_client(&self, id: &str) -> Result<ClientResponse, error::Error> {
+    pub async fn find_client(&self, id: &str) -> Result<ClientResponse, handle_errors::Error> {
         let oid = ObjectId::parse_str(id).map_err(|_| InvalidIDError(id.to_owned()))?;
         let query = doc! {
             "_id": oid,
@@ -68,7 +68,10 @@ impl DB {
         Ok(result)
     }
 
-    pub async fn create_client(&self, _entry: &ClientRequest) -> Result<Bson, error::Error> {
+    pub async fn create_client(
+        &self,
+        _entry: &ClientRequest,
+    ) -> Result<Bson, handle_errors::Error> {
         let new_client = self
             .get_clients_collection()
             .insert_one(
@@ -88,7 +91,7 @@ impl DB {
     pub async fn create_many_clients(
         &self,
         _entry: Vec<mongodb::bson::Document>,
-    ) -> Result<(), error::Error> {
+    ) -> Result<(), handle_errors::Error> {
         self.get_clients_collection()
             .insert_many(_entry, None)
             .await
@@ -96,7 +99,7 @@ impl DB {
         Ok(())
     }
 
-    pub async fn delete_client(&self, id: &str) -> Result<String, error::Error> {
+    pub async fn delete_client(&self, id: &str) -> Result<String, handle_errors::Error> {
         let oid = ObjectId::parse_str(id).map_err(|_| InvalidIDError(id.to_owned()))?;
         let query = doc! {
             "_id": oid,
@@ -130,7 +133,7 @@ impl DB {
         Ok(oid.to_hex())
     }
 
-    pub async fn delete_all_clients(&self) -> Result<(), error::Error> {
+    pub async fn delete_all_clients(&self) -> Result<(), handle_errors::Error> {
         self.get_clients_collection()
             .delete_many(doc! {}, None)
             .await
@@ -139,7 +142,7 @@ impl DB {
         Ok(())
     }
 
-    pub async fn get_all_clients_ids(&self) -> Result<Vec<String>, error::Error> {
+    pub async fn get_all_clients_ids(&self) -> Result<Vec<String>, handle_errors::Error> {
         let clients_ids = self
             .get_clients_collection()
             .distinct("_id", None, None)

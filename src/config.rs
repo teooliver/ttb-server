@@ -2,7 +2,7 @@ use clap::Parser;
 use dotenv;
 use std::env;
 
-use crate::error::Error;
+use crate::handle_errors::Error;
 
 /// Q&A web service API
 #[derive(Parser, Debug, PartialEq)]
