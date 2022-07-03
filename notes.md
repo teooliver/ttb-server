@@ -36,11 +36,8 @@ println!("DURATION {:?}", duration);
 - Refactor project into a library and a binary so its easier to run non blackbox tests.
 - Move routes in main to their own files
 - Create better types for json errors.
-- Extract Error handling functions to its own `lib`
 - Better return messages route success (instead of just 200);
 - Extract Routes to its own files
-- Pagination to `Get All Tasks Grouped By Date` route, one page per week. `api/tasks?page=1&size=2`
-- Add Users
 - Add authentication and authorization
 - Add Archive option for Clients and Projects
 - Add Delete option for Clients and Projects
@@ -49,14 +46,15 @@ println!("DURATION {:?}", duration);
 - - BodyDeserializeError
 - - CorsForbidden
 - - UNPROCESSABLE_ENTITY (invalid ID for example)
-
 - Add filter requests based on headers (for example team names) so we can log and understand from where and how the requests are being done.
 - Add health_check route
 - Add tracing to all routes
-
 - Limit fake events data to maximum of `8 hours a day`. (Good challenge)
 - Rename the `models` folder to `types`
 - Make use of Default Trait. I.e: impl Default for PaginationQuery/Pagination
+- ~~Pagination to `Get All Tasks Grouped By Date` route, one page per week. `api/tasks?page=1&size=2`~~
+- ~~Add Users~~
+- ~~Extract Error handling functions to its own `lib`~~
 
 # IMPORTANT INTEGRATION TESTS
 
