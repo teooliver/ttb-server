@@ -4,7 +4,6 @@ use serde::Serialize;
 use std::convert::Infallible;
 use thiserror::Error;
 use warp::{cors::CorsForbidden, http::StatusCode, reply, Rejection, Reply};
-// TODO: All this should be it own lib
 
 #[derive(Error, Debug)]
 pub enum Error {
