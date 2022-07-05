@@ -41,11 +41,11 @@ impl Config {
             .unwrap_or(Ok(config.port))
             .map_err(|e| Error::ParseError(e))?;
 
-        let db_user = env::var("MONGODB_USER").unwrap_or(config.db_user.to_owned());
+        let db_user = env::var("MONGODB_USER").unwrap_or_else(|_| config.db_user.to_owned());
         let db_password = env::var("MONGODB_PASSWORD").unwrap();
-        let db_host = env::var("MONGODB_HOST").unwrap_or(config.db_host.to_owned());
-        let db_port = env::var("MONGODB_PORT").unwrap_or(config.db_port.to_string());
-        let db_name = env::var("MONGODB_DB").unwrap_or(config.db_name.to_owned());
+        let db_host = env::var("MONGODB_HOST").unwrap_or_else(|_| config.db_host.to_owned());
+        let db_port = env::var("MONGODB_PORT").unwrap_or_else(|_| config.db_port.to_string());
+        let db_name = env::var("MONGODB_DB").unwrap_or_else(|_| config.db_name.to_owned());
 
         Ok(Config {
             log_level: config.log_level,
@@ -65,7 +65,9 @@ mod config_tests {
 
     fn set_env() {
         env::set_var("PORT", "5000");
+        env::set_var("MONGODB_USER", "mongoadmin");
         env::set_var("MONGODB_PASSWORD", "secret");
+        env::set_var("MONGODB_HOST", "127.0.0.1");
         env::set_var("MONGODB_PORT", "27017");
         env::set_var("MONGODB_DB", "test_db");
     }
@@ -74,10 +76,12 @@ mod config_tests {
     fn unset_and_set_api_key() {
         // ENV VARIABLES ARE NOT SET
         let result = std::panic::catch_unwind(|| Config::new());
+        println!("RESULT {:?}", result);
         assert!(result.is_err());
 
         // NOW WE SET THEM
         set_env();
+
         let expected = Config {
             log_level: "warn".to_string(),
             port: 5000,
@@ -88,8 +92,7 @@ mod config_tests {
             db_name: "test_db".to_string(),
         };
         let config = Config::new().unwrap();
-        assert_eq!(config, expected);
 
-        env::remove_var("")
+        assert_eq!(config, expected);
     }
 }
