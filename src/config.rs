@@ -76,7 +76,6 @@ mod config_tests {
     fn unset_and_set_api_key() {
         // ENV VARIABLES ARE NOT SET
         let result = std::panic::catch_unwind(|| Config::new());
-        println!("RESULT {:?}", result);
         assert!(result.is_err());
 
         // NOW WE SET THEM
