@@ -9,6 +9,7 @@ pub struct ProjectSchema {
     pub color: String,
     pub created_at: DateTime,
     pub updated_at: DateTime,
+    // TODO: created_by (acount who created this task)
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

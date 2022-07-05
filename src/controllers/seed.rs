@@ -1,5 +1,6 @@
 use crate::db::DB;
 use crate::handle_errors::Error::InvalidIDError;
+use crate::models::account::Session;
 use crate::{models::project::ProjectRequest, WebResult};
 use chrono::{prelude::*, Duration};
 use fake::{self, Fake};
@@ -161,10 +162,16 @@ pub async fn seed_all_data(db: DB) -> WebResult<impl Reply> {
     Ok(StatusCode::OK)
 }
 
-pub async fn remove_all_data(db: DB) -> WebResult<impl Reply> {
-    db.delete_all_clients().await?;
-    db.delete_all_projects().await?;
-    db.delete_all_tasks().await?;
+pub async fn remove_all_data(session: Session, db: DB) -> WebResult<impl Reply> {
+    let account_id = session.account_id;
 
-    Ok(StatusCode::OK)
+    if db.is_admin(&account_id).await? {
+        db.delete_all_clients().await?;
+        db.delete_all_projects().await?;
+        db.delete_all_tasks().await?;
+
+        Ok(StatusCode::OK)
+    } else {
+        Err(warp::reject::custom(handle_errors::Error::Unauthorized))
+    }
 }

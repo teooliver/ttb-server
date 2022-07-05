@@ -17,6 +17,8 @@ pub struct TaskSchema {
     pub created_at: DateTime,
     #[serde(with = "bson_datetime_as_rfc3339_string")]
     pub updated_at: DateTime,
+    // TODO: account_id (account this tasks relates too, (who did it))
+    // TODO: created_by (acount who created this task)
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

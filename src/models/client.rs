@@ -7,6 +7,7 @@ pub struct ClientSchema {
     pub name: String,
     pub created_at: DateTime,
     pub updated_at: DateTime,
+    // TODO: created_by (acount who created this task)
 }
 
 // TODO: Rename to NewClient

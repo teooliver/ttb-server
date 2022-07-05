@@ -1,5 +1,5 @@
 use super::with_db;
-use crate::controllers::seed;
+use crate::controllers::{authentication, seed};
 use crate::db::DB;
 use warp::Filter;
 
@@ -49,6 +49,7 @@ pub fn remove_all(
     warp::path("seed")
         .and(warp::get())
         .and(warp::path("remove"))
+        .and(authentication::auth())
         .and(with_db(db.clone()))
         .and_then(seed::remove_all_data)
 }

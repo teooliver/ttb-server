@@ -27,6 +27,10 @@ pub enum Error {
     WrongPassword,
     #[error("ArgonError")]
     ArgonLibraryError(ArgonError),
+    #[error("CannotDecryptToken")]
+    CannotDecryptToken,
+    #[error("Unauthorized")]
+    Unauthorized,
 }
 
 #[derive(Serialize)]
@@ -68,6 +72,14 @@ pub async fn handle_rejection(err: Rejection) -> std::result::Result<Box<dyn Rep
                 //     "Wrong E-Mail/Password combination".to_string(),
                 //     StatusCode::UNAUTHORIZED,
                 // ))
+            }
+            Error::CannotDecryptToken => {
+                code = StatusCode::BAD_REQUEST;
+                message = "Cannot Decrypt Token";
+            }
+            Error::Unauthorized => {
+                code = StatusCode::BAD_REQUEST;
+                message = "Unauthorized";
             }
             _ => {
                 eprintln!("unhandled application error: {:?}", err);

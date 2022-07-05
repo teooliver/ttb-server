@@ -90,14 +90,11 @@ pub async fn fetch_tasks_grouped_by_date_handler(
         // start: START_PAGE,
     };
 
-    println!("TASKS RESULT {:?}", &tasks.result);
-
     let result = PaginatinationResponse {
         results: tasks.result,
         pagination,
     };
 
-    println!("ALL RESULTS {:?}", &result);
     Ok(json(&result))
 }
 

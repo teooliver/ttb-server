@@ -31,6 +31,7 @@ println!("DURATION {:?}", duration);
 
 #### Backend
 
+- Remove thiserror dependency
 - Add proper error handling for DB interactions, no more `?` or unsafe `unwraps` all around.
 - Refactor all db object types
 - Refactor project into a library and a binary so its easier to run non blackbox tests.

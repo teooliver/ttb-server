@@ -1,24 +1,21 @@
 use crate::db::DB;
-use crate::models::account::Account;
+use crate::models::account::{Account, NewAccount, Role, Session};
 use crate::{handle_errors, WebResult};
 use argon2::{self, Config};
 use chrono::Utc;
 use mongodb::bson::oid::ObjectId;
 use rand::Rng;
+use std::{env, future};
 use warp::http::StatusCode;
-use warp::{reject, reply::json, Reply};
+use warp::{reject, reply::json, Filter, Reply};
 
-pub async fn register(account: Account, db: DB) -> WebResult<impl Reply> {
+pub async fn register(account: NewAccount, db: DB) -> WebResult<impl Reply> {
     let hashed_password = hash(account.password.as_bytes());
 
-    let account = Account {
+    let account = NewAccount {
         email: account.email,
         password: hashed_password,
-        _id: None,
-        first_name: None,
-        last_name: None,
-        created_at: None,
-        updated_at: None,
+        role: account.role,
     };
 
     match db.create_account(&account).await {
@@ -38,13 +35,6 @@ pub fn hash(password: &[u8]) -> String {
 }
 
 pub async fn login(login: Account, db: DB) -> WebResult<impl Reply> {
-    // let login = db
-    //     .get_account(&email)
-    //     .await
-    //     .map_err(|e| reject::custom(e))?;
-
-    // Ok(json(&login))
-
     match db.get_account(&login.email).await {
         Ok(account) => match verify_password(&account.password, login.password.as_bytes()) {
             Ok(verified) => {
@@ -78,4 +68,25 @@ fn issue_token(account_id: ObjectId) -> String {
         .set_claim("account_id", serde_json::json!(account_id))
         .build()
         .expect("Failed to construct paseto token w/ builder!")
+}
+
+pub fn verify_token(token: String) -> Result<Session, handle_errors::Error> {
+    let token = paseto::tokens::validate_local_token(
+        &token,
+        None,
+        &"RANDOM WORDS WINTER MACINTOSH PC".as_bytes(),
+        &paseto::tokens::TimeBackend::Chrono,
+    )
+    .map_err(|_| handle_errors::Error::CannotDecryptToken)?;
+    serde_json::from_value::<Session>(token).map_err(|_| handle_errors::Error::CannotDecryptToken)
+}
+
+pub fn auth() -> impl Filter<Extract = (Session,), Error = warp::Rejection> + Clone {
+    warp::header::<String>("Authorization").and_then(|token: String| {
+        let token = match verify_token(token) {
+            Ok(t) => t,
+            Err(_) => return future::ready(Err(warp::reject::reject())),
+        };
+        future::ready(Ok(token))
+    })
 }
