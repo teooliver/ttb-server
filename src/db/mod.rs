@@ -4,7 +4,7 @@ pub mod project_db_impl;
 pub mod tasks_db_impl;
 
 use crate::Result;
-use mongodb::{bson::oid::ObjectId, options::ClientOptions, Client};
+use mongodb::{options::ClientOptions, Client};
 
 #[derive(Clone, Debug)]
 pub struct DB {

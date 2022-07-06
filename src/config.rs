@@ -1,5 +1,4 @@
 use clap::Parser;
-use dotenv;
 use std::env;
 
 use crate::handle_errors::Error;

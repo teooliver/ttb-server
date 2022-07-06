@@ -1,13 +1,13 @@
 use crate::db::DB;
-use crate::types::account::{Account, NewAccount, Role, Session};
+use crate::types::account::{Account, NewAccount, Session};
 use crate::{handle_errors, WebResult};
 use argon2::{self, Config};
 use chrono::Utc;
 use mongodb::bson::oid::ObjectId;
 use rand::Rng;
-use std::{env, future};
+use std::future;
 use warp::http::StatusCode;
-use warp::{reject, reply::json, Filter, Reply};
+use warp::{Filter, Reply};
 
 pub async fn register(account: NewAccount, db: DB) -> WebResult<impl Reply> {
     let hashed_password = hash(account.password.as_bytes());

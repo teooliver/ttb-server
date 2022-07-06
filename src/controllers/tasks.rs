@@ -7,27 +7,6 @@ use crate::{db::DB, types::task::TaskRequest};
 use serde::{self, Deserialize, Serialize};
 use warp::{http::StatusCode, reject, reply::json, Reply};
 
-// TODO: remove before MR
-// #[derive(Debug, Serialize, Deserialize)]
-// pub struct PaginationQuery {
-//     page: Option<u32>,
-//     // TODO: change name to limit
-//     size: Option<u32>,
-// }
-
-// TODO: remove before MR
-// #[derive(Debug, Serialize, Deserialize)]
-// pub struct Pagination {
-//     previous: Option<String>, //Option
-//     next: Option<String>,     //Option
-//     next_page: Option<u32>,
-//     previous_page: Option<u32>,
-//     total_pages: u32,
-//     total_items: i32,
-//     size: u32,
-//     start: u32,
-// }
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PaginatinationResponse {
     results: Vec<TaskGroupDates>,

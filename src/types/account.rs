@@ -22,9 +22,6 @@ pub struct NewAccount {
     pub role: String,
 }
 
-// #[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq, Hash)]
-// pub struct AccountId(ObjectId);
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Session {
     pub exp: chrono::DateTime<Utc>,

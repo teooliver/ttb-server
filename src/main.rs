@@ -2,7 +2,6 @@ mod config;
 #[allow(dead_code)]
 mod controllers;
 mod db;
-// mod error;
 mod routes;
 mod types;
 mod utils;

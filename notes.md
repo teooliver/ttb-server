@@ -52,8 +52,8 @@ println!("DURATION {:?}", duration);
 - Add health_check route
 - Add tracing to all routes
 - Limit fake events data to maximum of `8 hours a day`. (Good challenge)
-- Rename the `models` folder to `types`
 - Make use of Default Trait. I.e: impl Default for PaginationQuery/Pagination
+- ~~ Rename the `models` folder to `types`~~
 - ~~Add authentication and authorization~~
 - ~~Pagination to `Get All Tasks Grouped By Date` route, one page per week. `api/tasks?page=1&size=2`~~
 - ~~Add Users~~

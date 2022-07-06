@@ -1,13 +1,9 @@
 use crate::handle_errors;
 use crate::handle_errors::Error::*;
 use crate::types::account::{Account, NewAccount, Role};
-use chrono::prelude::*;
-use futures::StreamExt;
-use mongodb::bson::{self, document, Bson};
+use mongodb::bson::Bson;
 use mongodb::bson::{doc, document::Document, oid::ObjectId};
-use mongodb::options::IndexOptions;
-use mongodb::{Collection, IndexModel};
-use std::error::Error;
+use mongodb::Collection;
 use std::str::FromStr;
 
 use super::DB;
