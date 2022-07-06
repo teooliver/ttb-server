@@ -1,4 +1,4 @@
-use crate::models::project::{
+use crate::types::project::{
     ProjectAfterAggregation, ProjectRequest, ProjectResponse, ProjectsGroupedByClient,
 };
 use crate::{handle_errors::Error::*, Result};

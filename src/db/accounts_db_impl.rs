@@ -1,6 +1,6 @@
 use crate::handle_errors;
 use crate::handle_errors::Error::*;
-use crate::models::account::{Account, NewAccount, Role};
+use crate::types::account::{Account, NewAccount, Role};
 use chrono::prelude::*;
 use futures::StreamExt;
 use mongodb::bson::{self, document, Bson};

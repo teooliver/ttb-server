@@ -1,4 +1,4 @@
-use crate::models::task::{
+use crate::types::task::{
     TaskAfterGrouped, TaskGroupDates, TaskRequest, TaskResponse, TasksGroupedByDate,
 };
 use crate::{handle_errors::Error::*, Result};

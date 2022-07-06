@@ -1,7 +1,7 @@
 use crate::db::DB;
 use crate::handle_errors::Error::InvalidIDError;
-use crate::models::account::Session;
-use crate::{models::project::ProjectRequest, WebResult};
+use crate::types::account::Session;
+use crate::{types::project::ProjectRequest, WebResult};
 use chrono::{prelude::*, Duration};
 use fake::{self, Fake};
 use mongodb::bson::Document;

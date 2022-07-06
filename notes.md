@@ -31,15 +31,16 @@ println!("DURATION {:?}", duration);
 
 #### Backend
 
+- Add user's id field to each task
+- Update `clap` lib impls
 - Remove thiserror dependency
 - Add proper error handling for DB interactions, no more `?` or unsafe `unwraps` all around.
 - Refactor all db object types
 - Refactor project into a library and a binary so its easier to run non blackbox tests.
 - Move routes in main to their own files
 - Create better types for json errors.
-- Better return messages route success (instead of just 200);
+- Better return messages to routes success (instead of just 200);
 - Extract Routes to its own files
-- Add authentication and authorization
 - Add Archive option for Clients and Projects
 - Add Delete option for Clients and Projects
 - Dockerize frontend and backend.
@@ -53,6 +54,7 @@ println!("DURATION {:?}", duration);
 - Limit fake events data to maximum of `8 hours a day`. (Good challenge)
 - Rename the `models` folder to `types`
 - Make use of Default Trait. I.e: impl Default for PaginationQuery/Pagination
+- ~~Add authentication and authorization~~
 - ~~Pagination to `Get All Tasks Grouped By Date` route, one page per week. `api/tasks?page=1&size=2`~~
 - ~~Add Users~~
 - ~~Extract Error handling functions to its own `lib`~~
@@ -83,8 +85,8 @@ println!("DURATION {:?}", duration);
 ### Study
 
 - Better understading of how `tracing` and `tracing-subscriber` works;
-- How would I implement Datadog here for example?
+- How would I implement Datadog here?
 
 ### Questions:
 
-In the filters chaing, when expecting a `query` from the url, is it better to just use `warp::query()` and later build a struct or whatever from it, or use it as a generecit recieving the apropriate type from the beginning, example: warp::query::<tasks::PaginationQuery>()
+In the filters chaing, when expecting a `query` from the url, is it better to just use `warp::query()` and later build a struct or whatever from it, or use it as a generic recieving the apropriate type from the beginning, example: warp::query::<tasks::PaginationQuery>()

@@ -1,9 +1,9 @@
-use crate::models::task::TaskGroupDates;
+use crate::types::task::TaskGroupDates;
 use crate::utils::pagination::{
     has_next_page, has_previous_page, sanitize_pagination_query, Pagination, PaginationQuery,
 };
 use crate::WebResult;
-use crate::{db::DB, models::task::TaskRequest};
+use crate::{db::DB, types::task::TaskRequest};
 use serde::{self, Deserialize, Serialize};
 use warp::{http::StatusCode, reject, reply::json, Reply};
 

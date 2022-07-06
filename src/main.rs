@@ -3,8 +3,8 @@ mod config;
 mod controllers;
 mod db;
 // mod error;
-mod models;
 mod routes;
+mod types;
 mod utils;
 
 use handle_errors;

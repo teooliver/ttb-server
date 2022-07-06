@@ -1,5 +1,5 @@
 use crate::db::DB;
-use crate::models::client::ClientRequest;
+use crate::types::client::ClientRequest;
 use crate::WebResult;
 use warp::{reject, reply::json, Reply};
 

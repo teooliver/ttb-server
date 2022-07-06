@@ -1,6 +1,6 @@
 use crate::handle_errors;
 use crate::handle_errors::Error::*;
-use crate::models::client::{ClientRequest, ClientResponse};
+use crate::types::client::{ClientRequest, ClientResponse};
 
 use bson::Document;
 use futures::StreamExt;

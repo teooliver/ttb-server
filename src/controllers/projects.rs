@@ -1,5 +1,5 @@
 use crate::WebResult;
-use crate::{db::DB, models::project::ProjectRequest};
+use crate::{db::DB, types::project::ProjectRequest};
 use tracing::{event, instrument, Level};
 use warp::{http::StatusCode, reject, reply::json, Reply};
 

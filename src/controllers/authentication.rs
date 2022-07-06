@@ -1,5 +1,5 @@
 use crate::db::DB;
-use crate::models::account::{Account, NewAccount, Role, Session};
+use crate::types::account::{Account, NewAccount, Role, Session};
 use crate::{handle_errors, WebResult};
 use argon2::{self, Config};
 use chrono::Utc;
