@@ -2,7 +2,8 @@
 	"info": {
 		"_postman_id": "f2564c37-c231-40ac-97ad-e4a2686af59c",
 		"name": "rust-time-track-base",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6804429"
 	},
 	"item": [
 		{
@@ -85,7 +86,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:5000/tasks/group?page=1&size=1",
+							"raw": "localhost:5000/tasks/group?size=20&page=1",
 							"host": [
 								"localhost"
 							],
@@ -96,11 +97,11 @@
 							],
 							"query": [
 								{
-									"key": "page",
-									"value": "1"
+									"key": "size",
+									"value": "20"
 								},
 								{
-									"key": "size",
+									"key": "page",
 									"value": "1"
 								}
 							]
@@ -585,6 +586,74 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "accounts",
+			"item": [
+				{
+					"name": "Create Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"another@test.com\",\n    \"password\": \"another_password\"\n\n}"
+						},
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/accounts",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"another@test.com\",\n    \"password\": \"another_password\"\n}"
+						},
+						"url": {
+							"raw": "{{rust_time_track_base_server_url}}/accounts/login",
+							"host": [
+								"{{rust_time_track_base_server_url}}"
+							],
+							"path": [
+								"accounts",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "health_check",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	]
 }
