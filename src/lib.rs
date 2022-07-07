@@ -1,6 +1,6 @@
 #![warn(clippy::all)]
 // #[allow(dead_code)]
-mod config;
+pub mod config;
 mod controllers;
 mod db;
 mod routes;
@@ -11,7 +11,7 @@ use handle_errors;
 
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 use std::convert::Infallible;
-use warp::{hyper::Method, Filter, Rejection};
+use warp::{hyper::Method, Filter, Rejection, Reply};
 
 use tracing_subscriber::fmt::format::FmtSpan;
 
@@ -20,44 +20,19 @@ type WebResult<T> = std::result::Result<T, Rejection>;
 
 use crate::{controllers::experiments, db::DB};
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    dotenv::dotenv().ok();
+// #[tokio::main]
+// async fn main() -> Result<()> {
+//     dotenv::dotenv().ok();
 
-    let config = config::Config::new().expect("Config can't be set");
+//     let config = config::Config::new().expect("Config can't be set");
 
-    let log_filter = format!(
-        "handle_errors={},rust_web_dev={},warp={}",
-        config.log_level, config.log_level, config.log_level
-    );
+//     Ok(())
+// }
 
-    let db = DB::init(
-        &format!(
-            "mongodb://{}:{}/{}",
-            config.db_host, config.db_port, config.db_name
-        ),
-        config.db_name,
-    )
-    .await?;
-
-    let options = IndexOptions::builder().unique(true).build();
-    let model = IndexModel::builder()
-        .keys(doc! {"email": 1})
-        .options(options)
-        .build();
-
-    db.get_accounts_collection()
-        .create_index(model, None)
-        .await
-        .expect("error creating index!");
-
-    tracing_subscriber::fmt()
-        // Use the filter we built above to determine which traces to record.
-        .with_env_filter(log_filter)
-        // Record an event when each span closes. This can be used to time our
-        // routes' durations!
-        .with_span_events(FmtSpan::CLOSE)
-        .init();
+async fn build_routes(db: DB) -> impl Filter<Extract = impl Reply> + Clone {
+    fn with_db(db: DB) -> impl Filter<Extract = (DB,), Error = Infallible> + Clone {
+        warp::any().map(move || db.clone())
+    }
 
     let cors = warp::cors()
         .allow_any_origin()
@@ -132,13 +107,52 @@ async fn main() -> Result<()> {
         .with(warp::trace::request())
         .recover(handle_errors::handle_rejection);
 
-    // tracing::info!("Q&A service build ID {}", env!("RUST_WEB_DEV_VERSION"));
-
-    println!("Started on port {}", config.port);
-    warp::serve(routes).run(([0, 0, 0, 0], config.port)).await;
-    Ok(())
+    routes
 }
 
-fn with_db(db: DB) -> impl Filter<Extract = (DB,), Error = Infallible> + Clone {
-    warp::any().map(move || db.clone())
+pub async fn setup_store(config: &config::Config) -> Result<DB> {
+    let log_filter = format!(
+        "handle_errors={},rust_web_dev={},warp={}",
+        config.log_level, config.log_level, config.log_level
+    );
+
+    let db: DB = DB::init(
+        &format!(
+            "mongodb://{}:{}/{}",
+            config.db_host, config.db_port, config.db_name
+        ),
+        config.db_name.to_string(),
+    )
+    .await?;
+
+    let options = IndexOptions::builder().unique(true).build();
+    let model = IndexModel::builder()
+        .keys(doc! {"email": 1})
+        .options(options)
+        .build();
+
+    // Setup mondodb index in collection
+    db.get_accounts_collection()
+        .create_index(model, None)
+        .await
+        .expect("error creating index!");
+
+    tracing_subscriber::fmt()
+        // Use the filter we built above to determine which traces to record.
+        .with_env_filter(log_filter)
+        // Record an event when each span closes. This can be used to time our
+        // routes' durations!
+        .with_span_events(FmtSpan::CLOSE)
+        .init();
+
+    Ok(db)
+}
+
+pub async fn run(config: config::Config, store: DB) {
+    // let routes = build_routes(store).await;
+    // warp::serve(routes).run(([0, 0, 0, 0], config.port)).await;
+
+    let routes = build_routes(store).await;
+    println!("Started on port {}", config.port);
+    warp::serve(routes).run(([0, 0, 0, 0], config.port)).await;
 }

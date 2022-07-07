@@ -31,6 +31,7 @@ println!("DURATION {:?}", duration);
 
 #### Backend
 
+- Remove dependency on custom `Result` type and use the `std Result` instead
 - Add user's id field to each task. (So we can use authorization to allow deletion and creation etc)
 - Update `clap` lib impls (using deprecated methods at the moment)
 - Remove thiserror dependency
