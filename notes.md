@@ -31,8 +31,8 @@ println!("DURATION {:?}", duration);
 
 #### Backend
 
-- Add user's id field to each task
-- Update `clap` lib impls
+- Add user's id field to each task. (So we can use authorization to allow deletion and creation etc)
+- Update `clap` lib impls (using deprecated methods at the moment)
 - Remove thiserror dependency
 - Add proper error handling for DB interactions, no more `?` or unsafe `unwraps` all around.
 - Refactor all db object types

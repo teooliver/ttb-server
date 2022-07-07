@@ -1,5 +1,6 @@
+#![warn(clippy::all)]
+// #[allow(dead_code)]
 mod config;
-#[allow(dead_code)]
 mod controllers;
 mod db;
 mod routes;

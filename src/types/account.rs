@@ -24,9 +24,9 @@ pub struct NewAccount {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Session {
+    // expiry date
     pub exp: chrono::DateTime<Utc>,
     pub account_id: ObjectId,
-    pub nbf: chrono::DateTime<Utc>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]

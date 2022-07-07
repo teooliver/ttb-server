@@ -34,6 +34,10 @@ impl Config {
     pub fn new() -> Result<Config, Error> {
         let config = Config::parse();
 
+        if env::var("PASETO_KEY").is_err() {
+            panic!("PASETO_KEY not set");
+        }
+
         let port = env::var("PORT")
             .ok()
             .map(|val| val.parse::<u16>())
@@ -63,6 +67,7 @@ mod config_tests {
     use super::*;
 
     fn set_env() {
+        env::set_var("PASETO_KEY", "RANDOM WORDS WINTER MACINTOSH PC");
         env::set_var("PORT", "5000");
         env::set_var("MONGODB_USER", "mongoadmin");
         env::set_var("MONGODB_PASSWORD", "secret");
