@@ -24,3 +24,12 @@ https://github.com/teooliver/ttb-client
 - React
 
 > This project uses MongoDB and provides a simple docker-compose.yml file to set it up in your system.
+
+### Next Steps:
+
+Refactor the code using the `rust-analyzer` style and contributions guide:
+https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/style.md
+
+### Notes and Todos:
+
+[Notes](./notes.md)

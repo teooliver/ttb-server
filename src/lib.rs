@@ -4,13 +4,15 @@ pub mod config;
 mod controllers;
 mod db;
 mod routes;
-mod types;
+pub mod types;
 mod utils;
 
-use handle_errors;
+// pub use integration_tests;
 
+pub use handle_errors;
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 use std::convert::Infallible;
+use tokio::sync::{oneshot, oneshot::Sender};
 use warp::{hyper::Method, Filter, Rejection, Reply};
 
 use tracing_subscriber::fmt::format::FmtSpan;
@@ -20,14 +22,9 @@ type WebResult<T> = std::result::Result<T, Rejection>;
 
 use crate::{controllers::experiments, db::DB};
 
-// #[tokio::main]
-// async fn main() -> Result<()> {
-//     dotenv::dotenv().ok();
-
-//     let config = config::Config::new().expect("Config can't be set");
-
-//     Ok(())
-// }
+pub struct OneshotHandler {
+    pub sender: Sender<i32>,
+}
 
 async fn build_routes(db: DB) -> impl Filter<Extract = impl Reply> + Clone {
     fn with_db(db: DB) -> impl Filter<Extract = (DB,), Error = Infallible> + Clone {
@@ -149,10 +146,25 @@ pub async fn setup_store(config: &config::Config) -> Result<DB> {
 }
 
 pub async fn run(config: config::Config, store: DB) {
-    // let routes = build_routes(store).await;
-    // warp::serve(routes).run(([0, 0, 0, 0], config.port)).await;
-
     let routes = build_routes(store).await;
+
     println!("Started on port {}", config.port);
     warp::serve(routes).run(([0, 0, 0, 0], config.port)).await;
+}
+
+pub async fn oneshot(store: DB) -> OneshotHandler {
+    let routes = build_routes(store).await;
+    let (tx, rx) = oneshot::channel::<i32>();
+
+    let socket: std::net::SocketAddr = "127.0.0.1:3030"
+        .to_string()
+        .parse()
+        .expect("Not a valid address");
+
+    let (_, server) = warp::serve(routes).bind_with_graceful_shutdown(socket, async {
+        rx.await.ok();
+    });
+
+    tokio::task::spawn(server);
+    OneshotHandler { sender: tx }
 }

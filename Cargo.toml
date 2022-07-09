@@ -22,12 +22,17 @@ reqwest = "0.11.9"
 dotenv = "0.15.0"
 clap = { version = "3.1.7", features = ["derive"] }
 proc-macro2 = "1.0.37"
-mock-server = { path = "mock-server", version = " 0.1.0" }
 rand = "0.8"
 rust-argon2 = "1.0"
 paseto = "2.0"
+# integration-tests = { path = "integration-tests", version = " 0.1.0" }
+mock-server = { path = "mock-server", version = " 0.1.0" }
 handle-errors = { path = "handle-errors", version = "0.1.0" }
 
 # Dev Dependencies
 fake = { version = "2.4", features=['chrono']}
 config = { version = "0.13.1", features = ["toml"] }
+
+
+[workspace]
+members = [".", "./handle-errors", "./integration-tests", './mock-server']
