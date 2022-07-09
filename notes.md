@@ -71,7 +71,7 @@ println!("DURATION {:?}", duration);
 
 - Whole user journey from seeding tasks, create tasks, projects and clients, check Charts and so on.
 
-# KNOWN BUGS:
+<!-- # KNOWN BUGS: -->
 
 ---
 

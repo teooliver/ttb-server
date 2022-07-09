@@ -27,8 +27,11 @@ https://github.com/teooliver/ttb-client
 
 ### Next Steps:
 
-Refactor the code using the `rust-analyzer` style and contributions guide:
-https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/style.md
+- Refactor the code using the `rust-analyzer` style and contributions guide:
+  https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/style.md
+- Remove dependency on custom `Result` type and use the `std Result` instead
+- Update `clap` lib impls (using deprecated methods at the moment)
+- Remove thiserror dependency
 
 ### Notes and Todos:
 
