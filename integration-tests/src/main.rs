@@ -18,11 +18,12 @@ async fn main() -> Result<(), handle_errors::Error> {
     let store = setup_store(&config).await?;
     let handler = oneshot(store).await;
 
-    let u = User {
+    let user = User {
         email: "test@email.com".to_string(),
         password: "password".to_string(),
     };
-    // register_new_user(&u).await?;
+
+    register_new_user(&user).await;
 
     // register_user();
     // login_user();
@@ -30,4 +31,18 @@ async fn main() -> Result<(), handle_errors::Error> {
 
     let _ = handler.sender.send(1);
     Ok(())
+}
+
+async fn register_new_user(user: &User) {
+    let client = reqwest::Client::new();
+    let res = client
+        .post("http://localhost:3030/registration")
+        .json(&user)
+        .send()
+        .await
+        .unwrap()
+        .json::<Value>()
+        .await;
+
+    assert_eq!(res.unwrap(), "Account added".to_string());
 }
