@@ -24,8 +24,8 @@ impl DB {
         })
     }
 
-    // pub async fn drop_all_collections(&self) -> Result<> {
-    //     self.client.database(&self.db_name).drop(None).await?;
+    // pub async fn drop_all_collections(&self) {
+    //     self.client.database(&self.db_name).drop(None).await?
     // }
 
     /// Example on how to get all collection names (for droping them for example)

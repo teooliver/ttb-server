@@ -21,6 +21,7 @@ pub async fn register(account: NewAccount, db: DB) -> WebResult<impl Reply> {
     match db.create_account(&account).await {
         Ok(_) => Ok(warp::reply::json(&"Account added".to_string())),
         Err(e) => {
+            println!("GOT HERE");
             // Add propper error message here
             tracing::event!(tracing::Level::ERROR, "{:?}", e);
             Err(warp::reject::custom(e))
