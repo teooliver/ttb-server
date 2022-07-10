@@ -31,6 +31,7 @@ println!("DURATION {:?}", duration);
 
 #### Backend
 
+- When creating MongoDb database/collection, use Admin credentials, so we protect the database from being dropped by mistake.
 - Remove dependency on custom `Result` type and use the `std Result` instead
 - Add user's id field to each task. (So we can use authorization to allow deletion and creation etc)
 - Update `clap` lib impls (using deprecated methods at the moment)

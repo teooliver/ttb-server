@@ -122,6 +122,9 @@ pub async fn setup_store(config: &config::Config) -> Result<DB> {
     )
     .await?;
 
+    // Creates an index on the "email" field to force the values to be unique.
+    // TODO: extract this to its own function
+    //  // async fn create_email_index(client: &Client) {
     let options = IndexOptions::builder().unique(true).build();
     let model = IndexModel::builder()
         .keys(doc! {"email": 1})
@@ -134,6 +137,21 @@ pub async fn setup_store(config: &config::Config) -> Result<DB> {
         .await
         .expect("error creating index!");
 
+    // /// Creates an index on the "username" field to force the values to be unique.
+    // async fn create_username_index(client: &Client) {
+    //     let options = IndexOptions::builder().unique(true).build();
+    //     let model = IndexModel::builder()
+    //         .keys(doc! { "username": 1 })
+    //         .options(options)
+    //         .build();
+    //     client
+    //         .database(DB_NAME)
+    //         .collection::<User>(COLL_NAME)
+    //         .create_index(model, None)
+    //         .await
+    //         .expect("creating an index should succeed");
+    // }
+
     tracing_subscriber::fmt()
         // Use the filter we built above to determine which traces to record.
         .with_env_filter(log_filter)
@@ -141,6 +159,8 @@ pub async fn setup_store(config: &config::Config) -> Result<DB> {
         // routes' durations!
         .with_span_events(FmtSpan::CLOSE)
         .init();
+
+    // db.drop_all_collections().await;
 
     Ok(db)
 }
